@@ -26,6 +26,29 @@ function tabPagesManagerWithPagination(tabsName, tabNameList, listFunction, coun
 
     //动态创建各个标签页
     console.info(tabNameList);
+
+    /*
+    * 抽象出来的设置分页的代码
+    * */
+    function setupPaginationDiv(paginationDiv, title) {
+        console.info("进入嵌套函数..." + title);
+        //分页设置
+        var total = countFunction(title)
+        var currentPage = readCookie("currentPage" + title, 1);
+        paginationDiv.pagination({
+            pagesize: pageSize,
+            total: total,
+            pageNumber: currentPage,
+            onSelectPage: function (pageNumber, pageSize) {
+                var ct = tabsDiv.tabs('getSelected').panel('options').title;    //这一句是关键啊
+                console.info("翻页：" + ct);
+                listFunction(ct, pageNumber, pageSize)
+            }
+        })
+        console.info("当前页：" + currentPage + ",   总页数：" + total);
+        return {total: total, currentPage: currentPage};
+    }
+
     for (x in tabNameList) {
         console.info("创建：" + x);
         var title = tabNameList[x];
@@ -46,19 +69,9 @@ function tabPagesManagerWithPagination(tabsName, tabNameList, listFunction, coun
         var paginationDiv = $('<div class="easyui-pagination"></div>');
         paginationDiv.attr('id', 'pagination' + title + 'Div');
         paginationDiv.appendTo(tab)
-        //分页设置
-        var total = countFunction(title)
-        var currentPage = readCookie("currentPage" + title, 1);
-        paginationDiv.pagination({
-            pagesize: pageSize,
-            total: total,
-            pageNumber: currentPage,
-            onSelectPage: function (pageNumber, pageSize) {
-                var ct = tabsDiv.tabs('getSelected').panel('options').title;    //这一句是关键啊
-                console.info("翻页：" + ct);
-                listFunction(ct, pageNumber, pageSize)
-            }
-        })
+        var __ret = setupPaginationDiv(paginationDiv, title);
+        var total = __ret.total;
+        var currentPage = __ret.currentPage;
     }
 
     // 设置标签管理函数
@@ -69,6 +82,7 @@ function tabPagesManagerWithPagination(tabsName, tabNameList, listFunction, coun
                 $.cookie("current" + tabsName, title, {path: '/'});
                 //------------------------------------------------------------------------------------------------------
                 loadFirstData(title, listFunction);
+                setupPaginationDiv(paginationDiv, title);      //切换到某一页的时候，需要更新分页机制。
             }
         }
     );

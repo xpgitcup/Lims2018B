@@ -1,9 +1,14 @@
 var operation4DataDiv;
+var tabList = ["数据字典", "数据模型", "数据项"];
+var displayDataKeyTreeDiv;
+var paginationDataKeyDiv;
 
 $(function () {
     operation4DataDiv = $("#operation4DataDiv");
+    displayDataKeyTreeDiv = $("#displayDataKeyTreeDiv");
+    paginationDataKeyDiv = $("#paginationDataKeyDiv");
+
     console.info("数据字典维护...");
-    var tabList = ["数据字典", "数据模型", "数据项"]
     tabPagesManagerWithPagination("operation4DataDiv", tabList, loadDictionaryData, countDictionaryData);
 
     var dictionary = readCookie("currentDictionary", 1);
@@ -11,11 +16,38 @@ $(function () {
 
     var dataKey = readCookie("currentDataKey", 1);
     $("#currentDataKey").html(dataKey);
+
+    switchTabs(false)
 })
 
+//======================================================================================================================
+// tab页面维护
+
+function switchTabs(isTree) {
+    var lastTimeTab = readCookie("current" + "operation4DataDiv", tabList[0]);
+    console.info("上一次的页面：" + lastTimeTab);
+    if (isTree) {
+        operation4DataDiv.tabs("enableTab", "数据模型维护")
+        tabList.forEach(function (value) { operation4DataDiv.tabs("disableTab", value) });
+        operation4DataDiv.tabs("select", "数据模型维护");
+        $.cookie("current" + "operation4DataDiv", lastTimeTab);
+    } else {
+        operation4DataDiv.tabs("disableTab", "数据模型维护")
+        tabList.forEach(function (value) { operation4DataDiv.tabs("enableTab", value) });
+        operation4DataDiv.tabs("select", lastTimeTab);
+    }
+}
 
 //======================================================================================================================
 // 数据模型基本处理函数
+
+/*
+* 维护当前数据模型
+* */
+function maintainDataKey(id) {
+    selectDataKey(id)
+    switchTabs(true);
+}
 
 /*
 * 编辑当前数据模型
@@ -40,7 +72,7 @@ function selectDataKey(id) {
     $.cookie("currentDataKey", id)
     console.info("记录当前模型：" + id);
     operation4DataDiv.tabs("select", "数据项");
-    document.location.reload();//当前页面
+    //document.location.reload();//当前页面
 }
 
 //======================================================================================================================
@@ -77,7 +109,7 @@ function selectCurrentDictionary(id) {
     $.cookie("currentDictionary", id)
     console.info("记录当前字典：" + id);
     operation4DataDiv.tabs("select", "数据模型");
-    document.location.reload();//当前页面
+    //document.location.reload();//当前页面
 }
 
 //======================================================================================================================
