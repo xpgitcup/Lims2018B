@@ -157,8 +157,8 @@ function showDataDictionary(id) {
 function selectCurrentDictionary(id) {
     $.cookie("currentDictionary", id)
     console.info("记录当前字典：" + id);
+    $("#currentDictionary").html(id);
     operation4DataDiv.tabs("select", "数据模型");
-    //document.location.reload();//当前页面
 }
 
 //======================================================================================================================
