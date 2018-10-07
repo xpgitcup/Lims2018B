@@ -30,7 +30,7 @@ function switchTabs(isTree) {
         operation4DataDiv.tabs("enableTab", "数据模型维护")
         tabList.forEach(function (value) { operation4DataDiv.tabs("disableTab", value) });
         operation4DataDiv.tabs("select", "数据模型维护");
-        $.cookie("current" + "operation4DataDiv", lastTimeTab);
+        $.cookie("current" + "operation4DataDiv", lastTimeTab, {path: "/"});
     } else {
         operation4DataDiv.tabs("disableTab", "数据模型维护")
         tabList.forEach(function (value) { operation4DataDiv.tabs("enableTab", value) });
@@ -45,7 +45,7 @@ function switchTabs(isTree) {
 * 维护当前数据模型
 * */
 function maintainDataKey(id) {
-    selectDataKey(id)
+    $.cookie("currentDataKey", id)
     switchTabs(true);
 }
 
