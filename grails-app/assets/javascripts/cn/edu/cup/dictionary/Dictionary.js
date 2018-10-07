@@ -79,6 +79,14 @@ function showDataKey(id) {
 }
 
 /*
+* 显示当前数据模型
+* */
+function showDataKeyInTab(id) {
+    console.info("显示数据模型:" + id);
+    ajaxRun("operation4Data/showDataKey?id=" + id, 0, "editDataKeyDiv");
+}
+
+/*
 * 选择当前数据模型
 * */
 function selectDataKey(id) {
@@ -108,7 +116,14 @@ function maintainDataDictionary(id) {
     //显示树形结构
     var getDataUrl = "operation4Data/getTreeDataDictionary/" + id;
     displayDataKeyTreeDiv.tree({
-        url:getDataUrl
+        url:getDataUrl,
+        onSelect: function (node) {
+            console.info(node);
+            console.info("当前节点：" + node.target.id);
+            showDataKeyInTab(node.attributes[0]);
+            //$("#createSystemMenu").attr('href', 'javascript: createSystemMenu(' + node.attributes[0] + ')');
+            //$.cookie("currentSystemMenu", node.target.id);
+        }
     });
 }
 

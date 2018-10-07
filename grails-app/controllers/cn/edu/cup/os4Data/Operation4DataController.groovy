@@ -125,6 +125,7 @@ class Operation4DataController {
     * */
 
     def showDataKey() {
+        println("showDataKey ${params}")
         def dataKey = DataKey.get(params.id)
         if (request.xhr) {
             render(template: 'showDataKey', model: [dataKey: dataKey])

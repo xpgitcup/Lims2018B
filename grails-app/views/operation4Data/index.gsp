@@ -83,7 +83,7 @@
                     </ul>
                 </div>
 
-                <div class="easyui-panel"></div>
+                <div class="easyui-panel" id="editDataKeyDiv"></div>
             </div>
         </div>
     </div>
