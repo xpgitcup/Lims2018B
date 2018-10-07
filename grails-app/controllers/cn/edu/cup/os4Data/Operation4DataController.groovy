@@ -183,6 +183,18 @@ class Operation4DataController {
     // 有关DataDictionary的处理
 
     /*
+    * 维护数据字典中的数据模型
+    * */
+    def maintainDataDictionary(DataDictionary dataDictionary) {
+        println("maintainDataDictionary: ${params}")
+        if (request.xhr) {
+            render(template: 'maintainDataKey')
+        } else {
+            redirect(action: "index")
+        }
+    }
+
+    /*
     * 返回某数据字典的数据模型的树形结构
     * */
 

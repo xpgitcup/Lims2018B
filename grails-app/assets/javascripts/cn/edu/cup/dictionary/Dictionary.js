@@ -17,7 +17,7 @@ $(function () {
     var dataKey = readCookie("currentDataKey", 1);
     $("#currentDataKey").html(dataKey);
 
-    switchTabs(false)
+    //switchTabs(false)
 })
 
 //======================================================================================================================
@@ -103,8 +103,12 @@ function selectDataKey(id) {
 * 维护当前数据字典的数据模型
 * */
 function maintainDataDictionary(id) {
+    console.info("编辑数据字典:" + id);
+    operation4DataDiv.tabs("select", "数据模型");
+    ajaxRun("operation4Data/maintainDataDictionary/" + id, 0, "list" + "数据模型" + "Div");
+
     var total = ajaxCalculate("operation4Data/countDataKey?id=" + id);
-    switchTabs(true);
+    //switchTabs(true);
     //设置分页机制
     paginationDataKeyDiv.pagination({
         pagesize: pageSize,
@@ -120,7 +124,7 @@ function maintainDataDictionary(id) {
         onSelect: function (node) {
             console.info(node);
             console.info("当前节点：" + node.target.id);
-            showDataKeyInTab(node.attributes[0]);
+            //showDataKeyInTab(node.attributes[0]);
             //$("#createSystemMenu").attr('href', 'javascript: createSystemMenu(' + node.attributes[0] + ')');
             //$.cookie("currentSystemMenu", node.target.id);
         }
