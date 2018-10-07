@@ -292,13 +292,6 @@ class InitService {
         fileSampleAttributes()
         //菜单
         fillSampleMenus()
-
-        def menuList = SystemMenu.list()
-        menuList.each { e ->
-            def menuJson = JSON.toJSONString(e)
-            println(menuJson)
-        }
-
         //对话
         fillSampleChat()
         //数据字典
@@ -348,20 +341,20 @@ class InitService {
 
     private void fillSampleDataKey() {
 
-        println("测试数据字典的数据...")
+        //println("测试数据字典的数据...")
         for (int i = 0; i < 20; i++) {
             def dataDictionary = new DataDictionary(
                     name: "测试性数据字典${i}"
             )
             dataDictionaryService.save(dataDictionary)
-            println("${dataDictionary}")
+            //println("${dataDictionary}")
             for (int j = 0; j < i; j++) {
                 def nd = new DataKey(
                         dataTag: "数据标签${i}.${j}",
                         upDataKey: null,
                         dictionary: dataDictionary
                 )
-                println("${nd}")
+                //println("${nd}")
                 dataKeyService.save(nd)
 
                 for (int k = 0; k < j; k++) {

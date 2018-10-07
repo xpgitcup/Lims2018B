@@ -63,7 +63,7 @@
                 <div class="nav">
                     <ul>
                         <li>
-                            <a class="list" href="javascript: switchTabs(false)">
+                            <a class="list" href="javascript: turnToDisplay()">
                                 返回
                             </a>
                         </li>
@@ -78,8 +78,8 @@
             <div class="col-md-8">
                 <div class="nav" role="navigation">
                     <ul>
-                        <li><a class="create" href="javascript: createSystemMenu(0)">新建根节点</a></li>
-                        <li><a id="createSystemMenu" class="create" href="#">新建子节点</a></li>
+                        <li><a class="create" href="javascript: createDataKey(0)">新建根节点</a></li>
+                        <li><a id="createDataKey" class="create" href="#">新建子节点</a></li>
                     </ul>
                 </div>
 

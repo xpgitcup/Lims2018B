@@ -17,7 +17,19 @@ $(function () {
     var dataKey = readCookie("currentDataKey", 1);
     $("#currentDataKey").html(dataKey);
 
-    switchTabs(false)
+    var current = readCookie("current", "")
+    if (current) {
+        switch (current) {
+            case "DataDictionary":
+                var id = readCookie("currentDictionary", 1);
+                maintainDataDictionary(id);
+                break;
+            case "DataKey":
+                break;
+        }
+    } else {
+        switchTabs(false)
+    }
 })
 
 //======================================================================================================================
@@ -45,6 +57,9 @@ function switchTabs(isTree) {
 * 维护当前数据模型
 * */
 function maintainDataKey(id) {
+    console.info("进入 数据模型 维护模式...");
+    $.cookie("current", "DataDictionary");
+
     $.cookie("currentDataKey", id)
     switchTabs(true);
     //设置分页机制
@@ -67,15 +82,26 @@ function maintainDataKey(id) {
 * */
 function editDataKey(id) {
     console.info("编辑数据模型:" + id);
-    ajaxRun("operation4Data/editDataKey?id=" + id, 0, "list" + "数据模型" + "Div");
+    var divName = readCookie("dataKeyView", "")
+    if (divName) {
+        ajaxRun("operation4Data/editDataKey?id=" + id, 0, divName);
+    } else {
+        ajaxRun("operation4Data/editDataKey?id=" + id, 0, "list" + "数据模型" + "Div");
+    }
 }
 
 /*
 * 显示当前数据模型
 * */
-function showDataKey(id) {
+function showDataKey(id, divName) {
     console.info("显示数据模型:" + id);
-    ajaxRun("operation4Data/showDataKey?id=" + id, 0, "list" + "数据模型" + "Div");
+    if (divName) {
+        $.cookie("dataKeyView", divName);
+        ajaxRun("operation4Data/showDataKey", id, divName);
+    } else {
+        $.cookie("dataKeyView", "");
+        ajaxRun("operation4Data/showDataKey", id, "list" + "数据模型" + "Div");
+    }
 }
 
 /*
@@ -93,7 +119,7 @@ function selectDataKey(id) {
     $.cookie("currentDataKey", id)
     console.info("记录当前模型：" + id);
     operation4DataDiv.tabs("select", "数据项");
-    //document.location.reload();//当前页面
+    $("#currentDataKey").html(id);
 }
 
 //======================================================================================================================
@@ -103,12 +129,19 @@ function selectDataKey(id) {
 * 维护当前数据字典的数据模型
 * */
 function maintainDataDictionary(id) {
+    console.info("进入 数据字典 维护模式...");
+    $.cookie("current", "DataDictionary");
+
+    selectCurrentDictionary(id)
+
     var total = ajaxCalculate("operation4Data/countDataKey?id=" + id);
+
     switchTabs(true);
+
     //设置分页机制
     paginationDataKeyDiv.pagination({
         pagesize: pageSize,
-        total: 1,
+        total: total,
         pageNumber: 1,
         displayMsg: "",
         layout:["first","prev", "next","last"]
@@ -120,7 +153,8 @@ function maintainDataDictionary(id) {
         onSelect: function (node) {
             console.info(node);
             console.info("当前节点：" + node.target.id);
-            showDataKeyInTab(node.attributes[0]);
+            //showDataKeyInTab(node.attributes[0]);
+            showDataKey(node.attributes[0], "editDataKeyDiv");
             //$("#createSystemMenu").attr('href', 'javascript: createSystemMenu(' + node.attributes[0] + ')');
             //$.cookie("currentSystemMenu", node.target.id);
         }
@@ -158,11 +192,17 @@ function selectCurrentDictionary(id) {
     $.cookie("currentDictionary", id)
     console.info("记录当前字典：" + id);
     operation4DataDiv.tabs("select", "数据模型");
-    //document.location.reload();//当前页面
+    $("#currentDictionary").html(id);
 }
 
 //======================================================================================================================
 // 通用函数
+
+function turnToDisplay() {
+    console.info("返回浏览模式...");
+    $.cookie("current", "");
+    switchTabs(false);
+}
 
 /*
 * 统计数据
