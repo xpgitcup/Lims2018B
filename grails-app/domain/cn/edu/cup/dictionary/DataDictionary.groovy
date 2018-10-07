@@ -10,6 +10,10 @@ class DataDictionary {
         name(unique: true)
     }
 
+    static mapping = {
+        datakeys sort: 'dataTag', 'id'
+    }
+
     String toString() {
         return "${name}/(${datakeys?.size()})"
     }

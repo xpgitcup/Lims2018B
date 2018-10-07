@@ -61,6 +61,7 @@ class InitService {
     /*
     * 初始化系统数据
     * */
+
     def initSystemData(domains) {
         println("初始化系统数据......")
         initSystemUsers()
@@ -70,6 +71,7 @@ class InitService {
     /*
     * 初始化系统菜单
     * */
+
     def initSystemMenuItems(domains) {
         if (SystemMenu.count() < 1) {
             def m0 = new SystemMenu(
@@ -312,7 +314,7 @@ class InitService {
 
     def fillSampleTitle() {
         println("初始化系统标题......")
-        if (SystemTitle.count()<1) {
+        if (SystemTitle.count() < 1) {
             def systemTitle = new SystemTitle(
                     applicationTitle: "EasyPipeNetwork 管网模拟种子程序",
                     applicationLogo: "cuplogoA.png",
@@ -320,13 +322,13 @@ class InitService {
             )
             systemTitle.save(true)
             //----------------------------------------------------------------------------------------------------------
-            if (SystemSponser.countBySystemTitle(systemTitle)<1) {
+            if (SystemSponser.countBySystemTitle(systemTitle) < 1) {
                 newSponser(systemTitle, "中国石油大学", "cuplogoA.png")
                 newSponser(systemTitle, "中海油", "logo_cnooc.png")
                 newSponser(systemTitle, "中联煤", "logo_cbm.png")
             }
             //----------------------------------------------------------------------------------------------------------
-            if (SystemCarousel.countBySystemTitle(systemTitle)<1) {
+            if (SystemCarousel.countBySystemTitle(systemTitle) < 1) {
                 newCarousel(systemTitle, "课题组", "课题组.jpg")
                 newCarousel(systemTitle, "多相流", "多相流.png")
                 newCarousel(systemTitle, "抽油机", "u68.jpg")
@@ -347,22 +349,22 @@ class InitService {
     private void fillSampleDataKey() {
 
         println("测试数据字典的数据...")
-        for (int i=0; i<20; i++) {
+        for (int i = 0; i < 20; i++) {
             def dataDictionary = new DataDictionary(
                     name: "测试性数据字典${i}"
             )
             dataDictionaryService.save(dataDictionary)
             println("${dataDictionary}")
-            for (int j=0; j<i; j++) {
+            for (int j = 0; j < i; j++) {
                 def nd = new DataKey(
-                        dataTag: "数据标签${i}${j}",
+                        dataTag: "数据标签${i}.${j}",
                         upDataKey: null,
                         dictionary: dataDictionary
                 )
                 println("${nd}")
                 dataKeyService.save(nd)
 
-                for (int k=0; k<j; k++) {
+                for (int k = 0; k < j; k++) {
                     def ndd = new DataKey(
                             dataTag: "key${i}.${j}.${k}",
                             upDataKey: nd,

@@ -47,10 +47,19 @@ function switchTabs(isTree) {
 function maintainDataKey(id) {
     $.cookie("currentDataKey", id)
     switchTabs(true);
-    // 设置分页
-    displayDataKeyTreeDiv;
-    // 显示树形结构
-    paginationDataKeyDiv;
+    //设置分页机制
+    paginationDataKeyDiv.pagination({
+        pagesize: pageSize,
+        total: 1,
+        pageNumber: 1,
+        displayMsg: "",
+        layout:["first","prev", "next","last"]
+    });
+    //显示树形结构
+    var getDataUrl = "operation4Data/getTreeDataKey/" + id;
+    displayDataKeyTreeDiv.tree({
+        url:getDataUrl
+    });
 }
 
 /*
@@ -81,6 +90,27 @@ function selectDataKey(id) {
 
 //======================================================================================================================
 // 数据字典基本处理函数
+
+/*
+* 维护当前数据字典的数据模型
+* */
+function maintainDataDictionary(id) {
+    var total = ajaxCalculate("operation4Data/countDataKey?id=" + id);
+    switchTabs(true);
+    //设置分页机制
+    paginationDataKeyDiv.pagination({
+        pagesize: pageSize,
+        total: 1,
+        pageNumber: 1,
+        displayMsg: "",
+        layout:["first","prev", "next","last"]
+    });
+    //显示树形结构
+    var getDataUrl = "operation4Data/getTreeDataDictionary/" + id;
+    displayDataKeyTreeDiv.tree({
+        url:getDataUrl
+    });
+}
 
 /*
  *创建数据字典
@@ -155,8 +185,7 @@ function loadDictionaryData(title, page, pageSize) {
             break;
         case "数据模型":
             var dictionary = readCookie("currentDictionary", 1)
-            params += ("&id=" + dictionary)
-            ajaxRun("operation4Data/listDataKey" + params, 0, "list" + title + "Div");
+            ajaxRun("operation4Data/listDataKey" + params, dictionary, "list" + title + "Div");
             break;
         case "数据项":
             break;

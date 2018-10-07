@@ -33,6 +33,9 @@
                             <a href="javascript: showDataDictionary(${item.id})">
                                 编辑
                             </a>
+                            <a href="javascript: maintainDataDictionary(${item.id})">
+                                维护
+                            </a>
                         </td>
                         <td>${item.datakeys?.size()}</td>
                     </tr>

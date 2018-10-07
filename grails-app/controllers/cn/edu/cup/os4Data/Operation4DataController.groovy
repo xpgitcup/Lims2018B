@@ -2,6 +2,7 @@ package cn.edu.cup.os4Data
 
 import cn.edu.cup.dictionary.DataDictionary
 import cn.edu.cup.dictionary.DataKey
+import cn.edu.cup.system.JsFrame
 import grails.converters.JSON
 import grails.validation.ValidationException
 
@@ -13,6 +14,7 @@ class Operation4DataController {
     def dataDictionaryService
     def dataKeyService
     def dataItemService
+    def treeViewService
 
     //==================================================================================================================
     // 有关DataItem的处理
@@ -40,6 +42,23 @@ class Operation4DataController {
 
     //==================================================================================================================
     // 有关DataKeyA的处理
+
+    /*
+    * 返回某数据模型的树形结构
+    * */
+
+    def getTreeDataKey(DataKey dataKey) {
+        params.context = "dataTag"
+        params.subItems = "subDataKeys"
+        params.attributes = "id"    //
+        def result = treeViewService.generateNodesString(dataKey, params, JsFrame.EasyUI)
+        if (request.xhr) {
+            render result as JSON
+        } else {
+            result
+        }
+    }
+
 
     /*
     * 删除数据模型
@@ -122,11 +141,12 @@ class Operation4DataController {
         def count = 0
         def dataDictionary = DataDictionary.get(params.id)
         if (dataDictionary) {
-            count = dataDictionary?.datakeys?.size()
+            //count = dataDictionary?.datakeys?.size()
+            count = DataKey.countByDictionaryAndUpDataKeyIsNull(dataDictionary)
         } else {
             count = DataKey.count()
         }
-        println("统计结果：${count} ${dataDictionary}")
+        println("countDataKey 统计结果：${count} --- ${dataDictionary}")
         def result = [count: count]
         if (request.xhr) {
             render result as JSON
@@ -140,8 +160,17 @@ class Operation4DataController {
     * */
 
     def listDataKey() {
+        println("listDataKey: ${params}")
         def dataDictionary = DataDictionary.get(params.id)
-        def dataKeyList = DataKey.findAllByDictionary(dataDictionary, params)
+        def count = DataKey.countByDictionaryAndUpDataKeyIsNull(dataDictionary)
+        def dataKeyList
+        def offset = Integer.parseInt(params.offset)
+        if (count > offset) {
+            dataKeyList = DataKey.findAllByDictionaryAndUpDataKeyIsNull(dataDictionary, params)
+        } else {
+            dataKeyList = DataKey.findAllByDictionaryAndUpDataKeyIsNull(dataDictionary)
+        }
+        println("查询结果：${dataDictionary}  ${dataKeyList}")
         if (request.xhr) {
             render(template: 'listDataKey', model: [dataKeyList: dataKeyList])
         } else {
@@ -151,6 +180,24 @@ class Operation4DataController {
 
     //==================================================================================================================
     // 有关DataDictionary的处理
+
+    /*
+    * 返回某数据字典的数据模型的树形结构
+    * */
+
+    def getTreeDataDictionary(DataDictionary dataDictionary) {
+        //def dataKeyList = dataDictionary.datakeys
+        def dataKeyList = DataKey.findAllByDictionaryAndUpDataKeyIsNull(dataDictionary)
+        params.context = "dataTag"
+        params.subItems = "subDataKeys"
+        params.attributes = "id"    //
+        def result = treeViewService.generateNodesString(dataKeyList, params, JsFrame.EasyUI)
+        if (request.xhr) {
+            render result as JSON
+        } else {
+            result
+        }
+    }
 
     /*
     * 创建数据字典
