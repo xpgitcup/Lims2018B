@@ -47,6 +47,10 @@ function switchTabs(isTree) {
 function maintainDataKey(id) {
     $.cookie("currentDataKey", id)
     switchTabs(true);
+    // 设置分页
+    displayDataKeyTreeDiv;
+    // 显示树形结构
+    paginationDataKeyDiv;
 }
 
 /*
