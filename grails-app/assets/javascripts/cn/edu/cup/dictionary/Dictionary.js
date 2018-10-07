@@ -47,6 +47,19 @@ function switchTabs(isTree) {
 function maintainDataKey(id) {
     selectDataKey(id)
     switchTabs(true);
+    //设置分页机制
+    paginationDataKeyDiv.pagination({
+        pagesize: pageSize,
+        total: 1,
+        pageNumber: 1,
+        displayMsg: "",
+        layout:["first","prev", "next","last"]
+    });
+    //显示树形结构
+    var getDataUrl = "";
+    displayDataKeyTreeDiv.tree({
+        url:getDataUrl
+    });
 }
 
 /*
