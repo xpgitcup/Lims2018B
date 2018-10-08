@@ -25,6 +25,8 @@ $(function () {
                 maintainDataDictionary(id);
                 break;
             case "DataKey":
+                var id = readCookie("currentDataKey", 1);
+                maintainDataKey(id);
                 break;
         }
     } else {
@@ -40,12 +42,16 @@ function switchTabs(isTree) {
     console.info("上一次的页面：" + lastTimeTab);
     if (isTree) {
         operation4DataDiv.tabs("enableTab", "数据模型维护")
-        tabList.forEach(function (value) { operation4DataDiv.tabs("disableTab", value) });
+        tabList.forEach(function (value) {
+            operation4DataDiv.tabs("disableTab", value)
+        });
         operation4DataDiv.tabs("select", "数据模型维护");
         $.cookie("current" + "operation4DataDiv", lastTimeTab, {path: "/"});
     } else {
         operation4DataDiv.tabs("disableTab", "数据模型维护")
-        tabList.forEach(function (value) { operation4DataDiv.tabs("enableTab", value) });
+        tabList.forEach(function (value) {
+            operation4DataDiv.tabs("enableTab", value)
+        });
         operation4DataDiv.tabs("select", lastTimeTab);
     }
 }
@@ -58,9 +64,8 @@ function switchTabs(isTree) {
 * */
 function maintainDataKey(id) {
     console.info("进入 数据模型 维护模式...");
-    $.cookie("current", "DataDictionary");
-
-    $.cookie("currentDataKey", id)
+    $.cookie("current", "DataKey");
+    selectDataKey(id)
     switchTabs(true);
     //设置分页机制
     paginationDataKeyDiv.pagination({
@@ -68,13 +73,34 @@ function maintainDataKey(id) {
         total: 1,
         pageNumber: 1,
         displayMsg: "",
-        layout:["first","prev", "next","last"]
+        layout: ["first", "prev", "next", "last"]
     });
     //显示树形结构
     var getDataUrl = "operation4Data/getTreeDataKey/" + id;
     displayDataKeyTreeDiv.tree({
-        url:getDataUrl
+        url: getDataUrl,
+        onSelect: function (node) {
+            console.info(node);
+            console.info("当前节点：" + node.target.id);
+            showDataKey(node.attributes[0], "editDataKeyDiv");
+            $("#createDataKey").attr('href', 'javascript: createDataKey(' + node.attributes[0] + ')');
+        }
     });
+}
+
+/*
+* 创建数据模型
+* */
+function createDataKey(id) {
+    var divName = readCookie("dataKeyView", "")
+    var dictionary = readCookie("currentDictionary", 0);
+    console.info("创建数据模型:" + id + "   " + divName);
+    if (divName) {
+        console.info("创建数据模型，在标签页中...")
+        ajaxRun("operation4Data/createDataKey/?dictionary=" + dictionary, id, divName);
+    } else {
+        ajaxRun("operation4Data/createDataKey/?dictionary=" + dictionary, id, "list" + "数据模型" + "Div");
+    }
 }
 
 /*
@@ -102,14 +128,6 @@ function showDataKey(id, divName) {
         $.cookie("dataKeyView", "");
         ajaxRun("operation4Data/showDataKey", id, "list" + "数据模型" + "Div");
     }
-}
-
-/*
-* 显示当前数据模型
-* */
-function showDataKeyInTab(id) {
-    console.info("显示数据模型:" + id);
-    ajaxRun("operation4Data/showDataKey?id=" + id, 0, "editDataKeyDiv");
 }
 
 /*
@@ -144,18 +162,18 @@ function maintainDataDictionary(id) {
         total: total,
         pageNumber: 1,
         displayMsg: "",
-        layout:["first","prev", "next","last"]
+        layout: ["first", "prev", "next", "last"]
     });
     //显示树形结构
     var getDataUrl = "operation4Data/getTreeDataDictionary/" + id;
     displayDataKeyTreeDiv.tree({
-        url:getDataUrl,
+        url: getDataUrl,
         onSelect: function (node) {
             console.info(node);
             console.info("当前节点：" + node.target.id);
             //showDataKeyInTab(node.attributes[0]);
             showDataKey(node.attributes[0], "editDataKeyDiv");
-            //$("#createSystemMenu").attr('href', 'javascript: createSystemMenu(' + node.attributes[0] + ')');
+            $("#createDataKey").attr('href', 'javascript: createDataKey(' + node.attributes[0] + ')');
             //$.cookie("currentSystemMenu", node.target.id);
         }
     });

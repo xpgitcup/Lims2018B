@@ -108,7 +108,22 @@ class Operation4DataController {
     }
 
     /*
-    *  显示数据模型
+    *  编辑数据模型
+    * */
+
+    def createDataKey(DataKey upDataKey) {
+        println("createDataKey ${params}")
+        def dictionary = DataDictionary.get(params.dictionary)
+        def dataKey = new DataKey(upDataKey: upDataKey, dictionary: dictionary)
+        if (request.xhr) {
+            render(template: 'editDataKey', model: [dataKey: dataKey])
+        } else {
+            respond dataKey
+        }
+    }
+
+    /*
+    *  编辑数据模型
     * */
 
     def editDataKey() {
