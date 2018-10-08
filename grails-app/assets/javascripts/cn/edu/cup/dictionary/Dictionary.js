@@ -47,12 +47,14 @@ function switchTabs(isTree) {
         });
         operation4DataDiv.tabs("select", "数据模型维护");
         $.cookie("current" + "operation4DataDiv", lastTimeTab, {path: "/"});
+        $.cookie("dataKeyView", "editDataKeyDiv");
     } else {
         operation4DataDiv.tabs("disableTab", "数据模型维护")
         tabList.forEach(function (value) {
             operation4DataDiv.tabs("enableTab", value)
         });
         operation4DataDiv.tabs("select", lastTimeTab);
+        $.cookie("dataKeyView", "");
     }
 }
 
