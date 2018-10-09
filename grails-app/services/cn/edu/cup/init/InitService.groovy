@@ -367,11 +367,17 @@ class InitService {
                     )
                     dataKeyService.save(ndd)
 
+                    def dd = new DataItem(
+                            dataKey: nd,
+                            dataValue: "测试性数据${i}.${j}.${k}"
+                    )
+                    dataItemService.save(dd)
+
                     // 生成示例性的数据
                     for (int m = 0; m < k; m++) {
                         def ddd = new DataItem(
                                 dataKey: ndd,
-                                upDataItem: null
+                                dataValue: "测试性数据${i}.${j}.${k}.${m}"
                         )
                         dataItemService.save(ddd)
                     }

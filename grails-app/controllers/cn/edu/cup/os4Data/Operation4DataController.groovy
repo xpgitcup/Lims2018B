@@ -1,6 +1,7 @@
 package cn.edu.cup.os4Data
 
 import cn.edu.cup.dictionary.DataDictionary
+import cn.edu.cup.dictionary.DataItem
 import cn.edu.cup.dictionary.DataKey
 import cn.edu.cup.system.JsFrame
 import grails.converters.JSON
@@ -20,18 +21,35 @@ class Operation4DataController {
     // 有关DataItem的处理
 
     /*
+    *  数据项的列表
+    * */
+
+    def listDataItem(DataKey dataKey) {
+        println("listDataItem: ${params}")
+        def count = DataItem.countByDataKey(dataKey)
+        def dataItemList
+        def offset = Integer.parseInt(params.offset)
+        if (count > offset) {
+            dataItemList = DataItem.findAllByDataKey(dataKey, params)
+        } else {
+            dataItemList = DataItem.findAllByDataKey(dataKey)
+        }
+        println("查询结果：${dataKey} -- ${count}:  ${dataItemList}")
+        if (request.xhr) {
+            render(template: 'listDataItem', model: [dataItemList: dataItemList])
+        } else {
+            respond dataItemList
+        }
+    }
+
+
+    /*
     *  数据项统计
     * */
 
-    def countDataItem() {
-        def count = 0
-        def dataDictionary = DataDictionary.get(params.id)
-        if (dataDictionary) {
-            count = dataDictionary?.datakeys?.size()
-        } else {
-            count = DataKey.count()
-        }
-        println("统计结果：${count} ${dataDictionary}")
+    def countDataItem(DataKey dataKey) {
+        def count = DataItem.countByDataKey(dataKey)
+        println("统计结果：${count} ${dataKey}")
         def result = [count: count]
         if (request.xhr) {
             render result as JSON

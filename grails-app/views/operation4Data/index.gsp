@@ -52,6 +52,16 @@
                 新数据字典
             </a>
         </li>
+        <li>
+            <a href="javascript: createDataKey()" class="create">
+                新数据模型
+            </a>
+        </li>
+        <li>
+            <a href="javascript: createDataItem()" class="create">
+                新数据
+            </a>
+        </li>
     </ul>
 </div>
 
