@@ -263,6 +263,8 @@ function loadDictionaryData(title, page, pageSize) {
             ajaxRun("operation4Data/listDataKey" + params, dictionary, "list" + title + "Div");
             break;
         case "数据项":
+            var dataKey = readCookie("currentDataKey", 1)
+            ajaxRun("operation4Data/listDataItemn" + params, dataKey, "list" + title + "Div");
             break;
     }
     $.cookie("currentPage" + title, page);

@@ -1,5 +1,6 @@
 package cn.edu.cup.init
 
+import cn.edu.cup.dictionary.DataItem
 import cn.edu.cup.dictionary.DataKey
 import com.alibaba.fastjson.JSON;
 import cn.edu.cup.dictionary.DataDictionary
@@ -22,6 +23,7 @@ class InitService {
     def systemMenuService
     def commonService
     def dataKeyService
+    def dataItemService
 
     //加载数据库初始化脚本
     def loadScripts(String dir) {
@@ -364,6 +366,15 @@ class InitService {
                             dictionary: dataDictionary
                     )
                     dataKeyService.save(ndd)
+
+                    // 生成示例性的数据
+                    for (int m = 0; m < k; m++) {
+                        def ddd = new DataItem(
+                                dataKey: ndd,
+                                upDataItem: null
+                        )
+                        dataItemService.save(ddd)
+                    }
                 }
             }
         }

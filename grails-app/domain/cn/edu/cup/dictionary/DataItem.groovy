@@ -3,7 +3,7 @@ package cn.edu.cup.dictionary
 class DataItem {
 
     DataKey dataKey
-    String      dataValue
+    String dataValue
 
     static belongsTo = [upDataItem: DataItem]
 
@@ -20,12 +20,9 @@ class DataItem {
     }
 
     String toString() {
-        if (dataKey.dataUnit.equals("无量纲"))
-        {
-            return  "${dataKey}=${dataValue}"
-        }
-        else
-        {
+        if (dataKey.dataUnit.equals("无量纲")) {
+            return "${dataKey}=${dataValue}"
+        } else {
             return "${dataKey}=${dataValue}${dataKey.dataUnit}"
         }
     }
