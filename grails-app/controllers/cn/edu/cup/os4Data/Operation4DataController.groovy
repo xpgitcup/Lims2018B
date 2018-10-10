@@ -7,6 +7,7 @@ import cn.edu.cup.system.JsFrame
 import grails.converters.JSON
 import grails.validation.ValidationException
 
+import static org.springframework.http.HttpStatus.CREATED
 import static org.springframework.http.HttpStatus.NO_CONTENT
 import static org.springframework.http.HttpStatus.OK
 
@@ -19,6 +20,57 @@ class Operation4DataController {
 
     //==================================================================================================================
     // 有关DataItem的处理
+
+    /*
+    * 保存数据项
+    * */
+
+    def saveDataItem(DataItem dataItem) {
+        if (dataItem == null) {
+            notFound()
+            return
+        }
+
+        try {
+            dataItemService.save(dataItem)
+        } catch (ValidationException e) {
+            respond dataItem.errors, view: 'create'
+            return
+        }
+
+        request.withFormat {
+            form multipartForm {
+                flash.message = message(code: 'default.created.message', args: [message(code: 'dataItem.label', default: 'DataItem'), dataItem.id])
+                redirect(action: "index")
+                //redirect dataItem
+            }
+            '*' { respond dataItem, [status: CREATED] }
+        }
+    }
+
+    /*
+    *  创建数据项
+    * */
+
+    def createDataItem(DataKey dataKey) {
+        println("createDataItem ${params}")
+        def dataItem = new DataItem(dataKey: dataKey)
+        def newSubItems = []
+        dataKey.subDataKeys.each { e->
+            def item = new DataItem(
+                    dataKey: e,
+                    upDataItem: dataItem
+            )
+            newSubItems.add(item)
+        }
+        dataItem.subDataItems = newSubItems
+
+        if (request.xhr) {
+            render(template: 'createDataItem', model: [dataItem: dataItem])
+        } else {
+            respond dataItem
+        }
+    }
 
     /*
     *  数据项的列表
@@ -126,7 +178,7 @@ class Operation4DataController {
     }
 
     /*
-    *  编辑数据模型
+    *  创建数据模型
     * */
 
     def createDataKey(DataKey upDataKey) {

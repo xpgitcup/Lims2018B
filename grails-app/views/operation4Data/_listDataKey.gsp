@@ -42,7 +42,7 @@
                     <a href="operation4DataKeyA/downloadTemplate/${item.id}">下载</a>
                 </td>
                 <td>
-                    <a href="javascript: createDataItemA(${item.id})">输入${item.dataTag}</a>
+                    <a href="javascript: createDataItem(${item.id})">输入${item.dataTag}</a>
                 </td>
                 <td>
                     <g:uploadForm controller="operation4DataKeyA" action="importFromExcelFile">

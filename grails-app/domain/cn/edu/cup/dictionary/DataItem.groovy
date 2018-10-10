@@ -7,8 +7,12 @@ class DataItem {
     DataKey dataKey
     String dataValue
 
+    static belongsTo = [upDataItem: DataItem]
+
+    static hasMany = [subDataItems: DataItem]
+
     static mapping = {
-        //subDataItems sort: 'dataKey'
+        subDataItems sort: 'dataKey'
     }
 
     static constraints = {
