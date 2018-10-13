@@ -2,6 +2,7 @@ package cn.edu.cup.init
 
 import cn.edu.cup.dictionary.DataItem
 import cn.edu.cup.dictionary.DataKey
+import cn.edu.cup.dictionary.DataKeyType
 import com.alibaba.fastjson.JSON;
 import cn.edu.cup.dictionary.DataDictionary
 import cn.edu.cup.system.SystemAttribute
@@ -350,9 +351,10 @@ class InitService {
             )
             dataDictionaryService.save(dataDictionary)
             //println("${dataDictionary}")
+            def types = DataKeyType.values()
             for (int j = 0; j < i; j++) {
                 def nd = new DataKey(
-                        dataTag: "数据标签${i}.${j}",
+                        dataTag: "数据标签${i}.${j} ",
                         upDataKey: null,
                         dictionary: dataDictionary
                 )
@@ -361,8 +363,9 @@ class InitService {
 
                 for (int k = 0; k < j; k++) {
                     def ndd = new DataKey(
-                            dataTag: "key${i}.${j}.${k}",
+                            dataTag: "key${i}.${j}.${k} ${types[k % types.length]}",
                             upDataKey: nd,
+                            dataKeyType: types[k % types.length],
                             dictionary: dataDictionary
                     )
                     dataKeyService.save(ndd)
