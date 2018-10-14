@@ -24,15 +24,12 @@
             </g:eachError>
         </ul>
     </g:hasErrors>
-<!--g:form resource="${this.dataItem}" method="POST"-->
     <g:uploadForm controller="operation4Data" action="saveDataItem">
         <fieldset class="form">
-            <!--f:all bean="dataItem"/-->
             <table>
                 <f:with bean="dataItem">
                     <tr>
                         <td>
-                            <!--f:field property="dataKeyA"/-->
                             ${dataItem.dataKey}
                             <g:hiddenField name="dataKey.id" value="${dataItem.dataKey.id}"/>
                         </td>
@@ -135,7 +132,6 @@
                             <td>
                             </td>
                         </g:if>
-
                     </tr>
                 </g:each>
             </table>
