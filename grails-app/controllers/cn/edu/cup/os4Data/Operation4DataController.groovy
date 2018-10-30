@@ -6,6 +6,7 @@ import cn.edu.cup.dictionary.DataKey
 import cn.edu.cup.system.JsFrame
 import grails.converters.JSON
 import grails.validation.ValidationException
+import groovy.xml.MarkupBuilder
 
 import static org.springframework.http.HttpStatus.CREATED
 import static org.springframework.http.HttpStatus.NO_CONTENT
@@ -120,14 +121,10 @@ class Operation4DataController {
 
     /*
     * 下载输入模板
+    * 要手动创建main/webapp目录，这样dir = request.getRealPath("/")才能找到该目录
     * */
 
     def downloadViewTemplate(DataKey dataKey) {
-        //def dir = servletContext.getResource("/") // file:/C:/Users/LIXIAO~1/AppData/Local/Temp/tomcat-docbase.3040173529144255624.8080/
-        //def dir = servletContext.getContextPath()
-        //def dir = grailsApplication.class.getResource("/").getPath() // /E:/LxpWorks/GrailsWorks/lims/Lims2018B/grails-app/views/
-        //def dir = request.getRealPath("/")
-        //println("resource ${dir}")
         def path = servletContext.getRealPath("/")
         def templateFileName = "${path}/viewTemplates/_createDataItemTemplate.gsp"
         def templateFile = new File(templateFileName)
@@ -137,8 +134,27 @@ class Operation4DataController {
             println("模板内容：")
             println(lines)
         }
-        def fileName = "dataKey_${dataKey.id}"
+        def fileName = "${path}/viewTemplates/dataKey_${dataKey.id}"
         printf("生成输入模板%s, %s\n", [path, fileName])
+        def vlines = []
+        vlines.add("<g:uploadForm controller=\"operation4Data\" action=\"saveDataItem\">")
+        vlines.add("</g:uploadForm>")
+
+        def strXml = new StringWriter()
+        MarkupBuilder mb  = new groovy.xml.MarkupBuilder(strXml);
+        mb.g(controller:"operation4Data", action:"saveDataItem"){
+            fieldset{
+                table{
+
+                }
+            }
+        }
+
+        def xmlFile = "${path}/viewTemplates/output.xml"
+        PrintWriter pw = new PrintWriter(xmlFile)
+        pw.write(strXml.toString())
+        pw.close()
+
         def dataItem = new DataItem(DataKey: dataKey)
         def newSubItems = []
         dataKey.subDataKeys.each { e ->
