@@ -56,7 +56,7 @@ class Operation4DataController {
         println("createDataItem ${params}")
         def dataItem = new DataItem(dataKey: dataKey)
         def newSubItems = []
-        dataKey.subDataKeys.each { e->
+        dataKey.subDataKeys.each { e ->
             def item = new DataItem(
                     dataKey: e,
                     upDataItem: dataItem
@@ -65,8 +65,13 @@ class Operation4DataController {
         }
         dataItem.subDataItems = newSubItems
 
+        def view = 'createDataItem'
+        if (params.view) {
+            view = params.view
+        }
+
         if (request.xhr) {
-            render(template: 'createDataItem', model: [dataItem: dataItem])
+            render(template: view, model: [dataItem: dataItem])
         } else {
             respond dataItem
         }
@@ -112,6 +117,57 @@ class Operation4DataController {
 
     //==================================================================================================================
     // 有关DataKeyA的处理
+
+    /*
+    * 下载输入模板
+    * */
+
+    def downloadViewTemplate(DataKey dataKey) {
+        //def dir = servletContext.getResource("/") // file:/C:/Users/LIXIAO~1/AppData/Local/Temp/tomcat-docbase.3040173529144255624.8080/
+        //def dir = servletContext.getContextPath()
+        //def dir = grailsApplication.class.getResource("/").getPath() // /E:/LxpWorks/GrailsWorks/lims/Lims2018B/grails-app/views/
+        //def dir = request.getRealPath("/")
+        //println("resource ${dir}")
+        def path = servletContext.getRealPath("/")
+        def templateFileName = "${path}/viewTemplates/_createDataItemTemplate.gsp"
+        def templateFile = new File(templateFileName)
+        def lines
+        if (templateFile) {
+            lines = templateFile.text
+            println("模板内容：")
+            println(lines)
+        }
+        def fileName = "dataKey_${dataKey.id}"
+        printf("生成输入模板%s, %s\n", [path, fileName])
+        def dataItem = new DataItem(DataKey: dataKey)
+        def newSubItems = []
+        dataKey.subDataKeys.each { e ->
+            def item = new DataItem(
+                    dataKey: e,
+                    upDataItem: dataItem
+            )
+            newSubItems.add(item)
+        }
+        dataItem.subDataItems = newSubItems
+        println("数据项：${dataItem.dataKey}")
+        newSubItems.eachWithIndex { e, i->
+            println("${e}--${i}")
+            println("subDataItems[${i}].dataValue")
+        }
+        redirect(action:"index")
+    }
+
+    /*
+    * 下载数据导入模板
+    * */
+
+    def downloadTemplate(DataKey dataKey) {
+        def path = servletContext.getRealPath("/") + "templates/datakey"
+        //def fileName = dataKeyA.createTemplate(path)
+        def fileName = excelService.createTemplate(dataKeyA, path)
+        params.downLoadFileName = fileName
+        commonService.downLoadFile(params)
+    }
 
     /*
     * 返回某数据模型的树形结构

@@ -21,7 +21,7 @@
         <th>ID</th>
         <th>名称</th>
         <th>操作</th>
-        <th>下载模板</th>
+        <th>下载</th>
         <th>输入</th>
         <th>导入数据</th>
         </thead>
@@ -39,7 +39,8 @@
                     <a href="javascript: maintainDataKey(${item.id})">维护</a>
                 </td>
                 <td>
-                    <a href="operation4DataKeyA/downloadTemplate/${item.id}">下载</a>
+                    <a href="operation4Data/downloadTemplate/${item.id}">导入模板</a>
+                    <a href="operation4Data/downloadViewTemplate/${item.id}">输入界面模板</a>
                 </td>
                 <td>
                     <a href="javascript: createDataItem(${item.id})">输入${item.dataTag}</a>

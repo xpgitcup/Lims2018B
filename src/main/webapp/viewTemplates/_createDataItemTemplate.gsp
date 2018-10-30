@@ -52,7 +52,14 @@
                     <!--针对普通类型的-->
                         <g:if test="${subItem.dataKey.dataKeyType == cn.edu.cup.dictionary.DataKeyType.dataKeyNormal}">
                             <td>
-                                <g:textField name="subDataItems[${i}].dataValue" id="dataValue_${i}"/>
+                                <ul>
+                                    <li>
+                                        ${subItem.dataKey.appendParameter}
+                                    </li>
+                                    <li>
+                                        <g:textField name="subDataItems[${i}].dataValue" id="dataValue_${i}"/>
+                                    </li>
+                                </ul>
                             </td>
                             <td>
                             </td>
