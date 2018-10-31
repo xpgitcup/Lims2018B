@@ -7,6 +7,8 @@ import cn.edu.cup.system.JsFrame
 import grails.converters.JSON
 import grails.validation.ValidationException
 import groovy.xml.MarkupBuilder
+import groovy.xml.StreamingMarkupBuilder
+import groovy.xml.XmlUtil
 
 import static org.springframework.http.HttpStatus.CREATED
 import static org.springframework.http.HttpStatus.NO_CONTENT
@@ -126,34 +128,49 @@ class Operation4DataController {
 
     def downloadViewTemplate(DataKey dataKey) {
         def path = servletContext.getRealPath("/")
-        def templateFileName = "${path}/viewTemplates/_createDataItemTemplate.gsp"
-        def templateFile = new File(templateFileName)
-        def lines
-        if (templateFile) {
-            lines = templateFile.text
-            println("模板内容：")
-            println(lines)
-        }
         def fileName = "${path}/viewTemplates/dataKey_${dataKey.id}"
         printf("生成输入模板%s, %s\n", [path, fileName])
-        def vlines = []
-        vlines.add("<g:uploadForm controller=\"operation4Data\" action=\"saveDataItem\">")
-        vlines.add("</g:uploadForm>")
 
-        def strXml = new StringWriter()
-        MarkupBuilder mb  = new groovy.xml.MarkupBuilder(strXml);
-        mb.g(controller:"operation4Data", action:"saveDataItem"){
-            fieldset{
-                table{
-
+        def builder = new StreamingMarkupBuilder()
+        builder.encoding = "UTF-8"
+        def html = {
+            mkp.xmlDeclaration()
+            mkp.pi("xml-stylesheet": "type='text/xsl' href='myfile.xslt'")
+            mkp.declareNamespace('': 'http://myDefaultNamespace')
+            mkp.declareNamespace('location': 'http://someOtherNamespace')
+            //mkp.declareNamespace('g': 'http://grails.org')
+            html {
+                head {}
+                body {
+                    test {
+                        ul {
+                            li("hhhhhhh")
+                        }
+                    }
+                    location.address("123 Main")
+                    g.uploadForm(controller: "operation4Data")
+                    g.form(action: "save") {
+                        table {
+                            tr {
+                                td {
+                                    "Hello"
+                                }
+                                td {
+                                    "2"
+                                }
+                                td {
+                                    "3"
+                                }
+                            }
+                        }
+                    }
                 }
             }
         }
 
         def xmlFile = "${path}/viewTemplates/output.xml"
-        PrintWriter pw = new PrintWriter(xmlFile)
-        pw.write(strXml.toString())
-        pw.close()
+        def writer = new FileWriter(xmlFile)
+        writer << builder.bind(html)
 
         def dataItem = new DataItem(DataKey: dataKey)
         def newSubItems = []
@@ -166,11 +183,11 @@ class Operation4DataController {
         }
         dataItem.subDataItems = newSubItems
         println("数据项：${dataItem.dataKey}")
-        newSubItems.eachWithIndex { e, i->
+        newSubItems.eachWithIndex { e, i ->
             println("${e}--${i}")
             println("subDataItems[${i}].dataValue")
         }
-        redirect(action:"index")
+        redirect(action: "index")
     }
 
     /*
