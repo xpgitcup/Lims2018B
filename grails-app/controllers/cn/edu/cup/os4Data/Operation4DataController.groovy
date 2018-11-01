@@ -128,66 +128,45 @@ class Operation4DataController {
 
     def downloadViewTemplate(DataKey dataKey) {
         def path = servletContext.getRealPath("/")
+        // 准备模板引擎
+        def templateFileName = "${path}/viewTemplates/_createDataItemTemplate.tpl"
+        def templateFile = new File(templateFileName)
+        def engine = new groovy.text.GStringTemplateEngine()
+        def template = engine.createTemplate(templateFile)
+
+
+        List fields = createFieldsBinding(dataKey)
+
+        // 目标文件
         def fileName = "${path}/viewTemplates/dataKey_${dataKey.id}"
         printf("生成输入模板%s, %s\n", [path, fileName])
+        def outString = template.make(fields)
+        def printer = new File(fileName).newPrintWriter('utf-8')
+        printer.println(outString)
+        printer.close()
 
-        def builder = new StreamingMarkupBuilder()
-        builder.encoding = "UTF-8"
-        def html = {
-            mkp.xmlDeclaration()
-            mkp.pi("xml-stylesheet": "type='text/xsl' href='myfile.xslt'")
-            mkp.declareNamespace('': 'http://myDefaultNamespace')
-            mkp.declareNamespace('location': 'http://someOtherNamespace')
-            //mkp.declareNamespace('g': 'http://grails.org')
-            html {
-                head {}
-                body {
-                    test {
-                        ul {
-                            li("hhhhhhh")
-                        }
-                    }
-                    location.address("123 Main")
-                    g.uploadForm(controller: "operation4Data")
-                    g.form(action: "save") {
-                        table {
-                            tr {
-                                td {
-                                    "Hello"
-                                }
-                                td {
-                                    "2"
-                                }
-                                td {
-                                    "3"
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        }
-
-        def xmlFile = "${path}/viewTemplates/output.xml"
-        def writer = new FileWriter(xmlFile)
-        writer << builder.bind(html)
-
-        def dataItem = new DataItem(DataKey: dataKey)
-        def newSubItems = []
-        dataKey.subDataKeys.each { e ->
-            def item = new DataItem(
-                    dataKey: e,
-                    upDataItem: dataItem
-            )
-            newSubItems.add(item)
-        }
-        dataItem.subDataItems = newSubItems
-        println("数据项：${dataItem.dataKey}")
-        newSubItems.eachWithIndex { e, i ->
-            println("${e}--${i}")
-            println("subDataItems[${i}].dataValue")
-        }
         redirect(action: "index")
+    }
+
+    /**
+     * 生成数据--根（只有名称，没有value，）
+     * 后续的字段：名称，值
+     * 根据不同的类型，生成不同的界面元素
+     */
+    private List createFieldsBinding(DataKey dataKey) {
+        def fields = []
+        def field = [:]
+        field.label = dataKey.dataTag
+        field.value = ""
+        fields.add(field)
+        dataKey.subDataKeys.eachWithIndex { DataKey entry, int i ->
+            def f = [:]
+            f.label = "subDataItems[${i}].dataValue"
+            f.value = "dataValue_${i}"
+            fields.add(f)
+        }
+        println("${fields}")
+        fields
     }
 
     /*
