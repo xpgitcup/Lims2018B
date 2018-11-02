@@ -134,13 +134,14 @@ class Operation4DataController {
         def engine = new groovy.text.GStringTemplateEngine()
         def template = engine.createTemplate(templateFile)
 
-
-        List fields = createFieldsBinding(dataKey)
+        def dataKeyFields =[:]
+        dataKeyFields.label = dataKey.dataTag
+        dataKeyFields.fields = createFieldsBinding(dataKey)
 
         // 目标文件
         def fileName = "${path}/viewTemplates/dataKey_${dataKey.id}"
         printf("生成输入模板%s, %s\n", [path, fileName])
-        def outString = template.make(fields)
+        def outString = template.make(dataKeyFields)
         def printer = new File(fileName).newPrintWriter('utf-8')
         printer.println(outString)
         printer.close()

@@ -6,7 +6,7 @@
                     <tr>
                         <td>
                             \${dataItem.dataKey}
-                            <g:hiddenField name="dataKey.id" value="\${dataItem.dataKey.id}"/>
+yieldUnescaped                            <g:hiddenField name="dataKey.id" value="${dataItem.dataKey.id}"/>
                         </td>
                         <td>
                             <!--f:field property="dataValue"/-->
@@ -18,8 +18,7 @@
             </table>
         </fieldset>
         <fieldset class="buttons">
-            <g:submitButton name="create" class="save"
-                            value="\${message(code: 'default.button.create.label', default: 'Create')}"/>
+yieldUnescaped   <g:submitButton name="create" class="save" value="${message(code: 'default.button.create.label', default: 'Create')}"/>
         </fieldset>
     </g:uploadForm>
 </div>
