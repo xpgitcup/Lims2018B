@@ -139,7 +139,7 @@ class Operation4DataController {
         dataKeyFields.fields = createFieldsBinding(dataKey)
 
         // 目标文件
-        def fileName = "${path}/viewTemplates/dataKey_${dataKey.id}"
+        def fileName = "${path}/viewTemplates/dataKey_${dataKey.id}.gsp"
         printf("生成输入模板%s, %s\n", [path, fileName])
         def outString = template.make(dataKeyFields)
         def printer = new File(fileName).newPrintWriter('utf-8')
