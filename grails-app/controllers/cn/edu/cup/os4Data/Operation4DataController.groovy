@@ -71,7 +71,8 @@ class Operation4DataController {
         def dataKeyViewFileName = dataKeyViewFileName(dataKey)
         def dataKeyViewFile = new File(dataKeyViewFileName)
         if (dataKeyViewFile.exists()) {
-            view = dataKeyViewFileName
+            //view = dataKeyViewFileName
+            view = "${dataKey.id}/datakey_${dataKey.id}"
         }
         // 如果用户指定，使用用户指定的
         if (params.view) {
@@ -134,14 +135,29 @@ class Operation4DataController {
     def downloadViewTemplate(DataKey dataKey) {
         def path = servletContext.getRealPath("/")
         // 准备模板引擎
-        def templateFileName = "${path}/viewTemplates/_createDataItemTemplate.tpl"
+        def templateFileName = "${path}/viewTemplates/_createDataItemTemplate.gsp"
         def templateFile = new File(templateFileName)
         def engine = new groovy.text.GStringTemplateEngine()
         def template = engine.createTemplate(templateFile)
 
-        def dataKeyFields =[:]
-        dataKeyFields.label = dataKey.dataTag
-        dataKeyFields.fields = createFieldsBinding(dataKey)
+        def fieldTemplateFileName = "${path}/viewTemplates/fieldTemplate.gsp"
+        def fieldTemplateFile = new File(fieldTemplateFileName)
+        def fieldEngine = new groovy.text.GStringTemplateEngine()
+        def fieldTemplate = fieldEngine.createTemplate(fieldTemplateFile)
+
+        // 子关键字字段字符串的生成
+        def subFields = createFieldsBinding(dataKey)
+        def subFieldString = ""
+        subFields.each { e->
+            subFieldString += fieldTemplate.make(e)
+        }
+
+        // 主关键字字段
+        def dataKeyFieldList = [:]
+        dataKeyFieldList.keylabel = dataKey.dataTag
+        dataKeyFieldList.dataKeyId = dataKey.id
+        // 子关键字字段
+        dataKeyFieldList.subkeyFields = subFieldString
 
         // 目标文件
         def currentPath = this.class.getResource("/").getPath()
@@ -151,8 +167,8 @@ class Operation4DataController {
         if (!dir.exists()) {
             dir.mkdir()
         }
-        printf("生成输入模板%s, %s\n", [path, fileName])
-        def outString = template.make(dataKeyFields)
+        printf("生成输入模板%s\n", [fileName])
+        def outString = template.make(dataKeyFieldList)
         def printer = new File(fileName).newPrintWriter('utf-8')
         printer.println(outString)
         printer.close()
@@ -167,10 +183,6 @@ class Operation4DataController {
      */
     private List createFieldsBinding(DataKey dataKey) {
         def fields = []
-        def field = [:]
-        field.label = dataKey.dataTag
-        field.value = ""
-        fields.add(field)
         dataKey.subDataKeys.eachWithIndex { DataKey entry, int i ->
             def f = [:]
             f.label = "subDataItems[${i}].dataValue"
@@ -338,8 +350,7 @@ class Operation4DataController {
         }
         // 检查用户视图的存在性
         def dataKeyViewList = [:]
-        println("当前路径是 ${currentPath}")
-        dataKeyList.each { e->
+        dataKeyList.each { e ->
             GString fileName = dataKeyViewFileName(e)
             def file = new File(fileName)
             dataKeyViewList.put(e.id, file.exists())
@@ -354,7 +365,7 @@ class Operation4DataController {
 
     private GString dataKeyViewFileName(DataKey e) {
         def currentPath = this.class.getResource("/").getPath()
-        def fileName = "${currentPath}/operation4Data/${e.id}/_datakey_${e.id}.gsp"
+        def fileName = "${currentPath}operation4Data/${e.id}/_datakey_${e.id}.gsp"
         fileName
     }
 

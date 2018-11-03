@@ -3,6 +3,10 @@
     <g:uploadForm controller="operation4Data" action="saveDataItem">
         <fieldset class="form">
             <table>
+                <tr>
+                    <td>
+                    </td>
+                </tr>
             </table>
             <table>
             </table>
