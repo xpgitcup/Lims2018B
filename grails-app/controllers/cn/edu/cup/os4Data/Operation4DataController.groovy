@@ -6,9 +6,6 @@ import cn.edu.cup.dictionary.DataKey
 import cn.edu.cup.system.JsFrame
 import grails.converters.JSON
 import grails.validation.ValidationException
-import groovy.xml.MarkupBuilder
-import groovy.xml.StreamingMarkupBuilder
-import groovy.xml.XmlUtil
 
 import static org.springframework.http.HttpStatus.CREATED
 import static org.springframework.http.HttpStatus.NO_CONTENT
@@ -68,7 +65,15 @@ class Operation4DataController {
         }
         dataItem.subDataItems = newSubItems
 
+        // 缺省的情况
         def view = 'createDataItem'
+        // 如果有生成的视图，就是用生成的静态视图
+        def dataKeyViewFileName = dataKeyViewFileName(dataKey)
+        def dataKeyViewFile = new File(dataKeyViewFileName)
+        if (dataKeyViewFile.exists()) {
+            view = dataKeyViewFileName
+        }
+        // 如果用户指定，使用用户指定的
         if (params.view) {
             view = params.view
         }
@@ -139,7 +144,13 @@ class Operation4DataController {
         dataKeyFields.fields = createFieldsBinding(dataKey)
 
         // 目标文件
-        def fileName = "${path}/viewTemplates/dataKey_${dataKey.id}.gsp"
+        def currentPath = this.class.getResource("/").getPath()
+        def fileName = "${currentPath}/operation4Data/${dataKey.id}/_dataKey_${dataKey.id}.gsp"
+        def file = new File(fileName)
+        def dir = file.getParentFile()
+        if (!dir.exists()) {
+            dir.mkdir()
+        }
         printf("生成输入模板%s, %s\n", [path, fileName])
         def outString = template.make(dataKeyFields)
         def printer = new File(fileName).newPrintWriter('utf-8')
@@ -325,12 +336,26 @@ class Operation4DataController {
         } else {
             dataKeyList = DataKey.findAllByDictionaryAndUpDataKeyIsNull(dataDictionary)
         }
-        println("查询结果：${dataDictionary}  ${dataKeyList}")
+        // 检查用户视图的存在性
+        def dataKeyViewList = [:]
+        println("当前路径是 ${currentPath}")
+        dataKeyList.each { e->
+            GString fileName = dataKeyViewFileName(e)
+            def file = new File(fileName)
+            dataKeyViewList.put(e.id, file.exists())
+        }
+        //println("查询结果：${dataDictionary}  ${dataKeyList}")
         if (request.xhr) {
-            render(template: 'listDataKey', model: [dataKeyList: dataKeyList])
+            render(template: 'listDataKey', model: [dataKeyList: dataKeyList, dataKeyViewList: dataKeyViewList])
         } else {
             respond dataKeyList
         }
+    }
+
+    private GString dataKeyViewFileName(DataKey e) {
+        def currentPath = this.class.getResource("/").getPath()
+        def fileName = "${currentPath}/operation4Data/${e.id}/_datakey_${e.id}.gsp"
+        fileName
     }
 
     //==================================================================================================================
