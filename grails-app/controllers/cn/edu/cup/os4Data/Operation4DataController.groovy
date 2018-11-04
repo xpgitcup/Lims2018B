@@ -145,7 +145,7 @@ class Operation4DataController {
                 subKeyString:""
         ]
         // 构建mainKeyString
-        binding.mainKeyString = createFieldsBinding([datKey])
+        binding.mainKeyString = createFieldsBinding([dataKey])
         // 构建subKeyString
         binding.subKeyString = createFieldsBinding(dataKey.subDataKeys)
         //--------------------------------------------------------------------------------------------------------------
@@ -180,9 +180,14 @@ class Operation4DataController {
         def fields = []
         dataKeys.eachWithIndex { DataKey entry, int i ->
             def f = [:]
-            f.dataKeyIdName =
-            f.label = "subDataItems[${i}].dataValue"
-            f.value = "dataValue_${i}"
+            f.dataTag = "${entry.dataTag}"
+            if (isMainKey) {
+                f.dataKeyIdName = "dataKey.id"
+                f.dataKeyId = "${e.id}"
+            }  else {
+                f.dataKeyIdName = "subDataItems[${i}].dataValue"
+                f.value = "dataValue_${i}"
+            }
             fields.add(f)
         }
         println("${fields}")
