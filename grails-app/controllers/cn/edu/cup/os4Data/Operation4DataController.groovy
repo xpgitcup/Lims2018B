@@ -134,31 +134,26 @@ class Operation4DataController {
 
     def downloadViewTemplate(DataKey dataKey) {
         def path = servletContext.getRealPath("/")
-        // 准备模板引擎
+        /*
+        * 实际上输入包括两个部分：首先是主关键字的输入，然后是子关键字的输入。
+        * 两个部分的内容是一样的。
+        * 首先都包括一个隐藏的输入项：id, 也是名称、值。 两部分。（没有提示项）
+        * 然后是 提示、名称、值
+        * */
+        def binding = [
+                mainKeyString:"",
+                subKeyString:""
+        ]
+        // 构建mainKeyString
+        binding.mainKeyString = createFieldsBinding([datKey])
+        // 构建subKeyString
+        binding.subKeyString = createFieldsBinding(dataKey.subDataKeys)
+        //--------------------------------------------------------------------------------------------------------------
+        // 准备模板引擎--最终的版本
         def templateFileName = "${path}/viewTemplates/_createDataItemTemplate.gsp"
         def templateFile = new File(templateFileName)
         def engine = new groovy.text.GStringTemplateEngine()
         def template = engine.createTemplate(templateFile)
-
-        def fieldTemplateFileName = "${path}/viewTemplates/fieldTemplate.gsp"
-        def fieldTemplateFile = new File(fieldTemplateFileName)
-        def fieldEngine = new groovy.text.GStringTemplateEngine()
-        def fieldTemplate = fieldEngine.createTemplate(fieldTemplateFile)
-
-        // 子关键字字段字符串的生成
-        def subFields = createFieldsBinding(dataKey)
-        def subFieldString = ""
-        subFields.each { e->
-            subFieldString += fieldTemplate.make(e)
-        }
-
-        // 主关键字字段
-        def dataKeyFieldList = [:]
-        dataKeyFieldList.keylabel = dataKey.dataTag
-        dataKeyFieldList.dataKeyId = dataKey.id
-        // 子关键字字段
-        dataKeyFieldList.subkeyFields = subFieldString
-
         // 目标文件
         def currentPath = this.class.getResource("/").getPath()
         def fileName = "${currentPath}/operation4Data/${dataKey.id}/_dataKey_${dataKey.id}.gsp"
@@ -168,8 +163,8 @@ class Operation4DataController {
             dir.mkdir()
         }
         printf("生成输入模板%s\n", [fileName])
-        def outString = template.make(dataKeyFieldList)
-        def printer = new File(fileName).newPrintWriter('utf-8')
+        def outString = template.make(binding)      //匹配字符串，生成最终的文本
+        def printer = new File(fileName).newPrintWriter('utf-8')    //写入文件
         printer.println(outString)
         printer.close()
 
@@ -181,16 +176,27 @@ class Operation4DataController {
      * 后续的字段：名称，值
      * 根据不同的类型，生成不同的界面元素
      */
-    private List createFieldsBinding(DataKey dataKey) {
+    private List createFieldsBinding(dataKeys, isMainKey = true) {
         def fields = []
-        dataKey.subDataKeys.eachWithIndex { DataKey entry, int i ->
+        dataKeys.eachWithIndex { DataKey entry, int i ->
             def f = [:]
+            f.dataKeyIdName =
             f.label = "subDataItems[${i}].dataValue"
             f.value = "dataValue_${i}"
             fields.add(f)
         }
         println("${fields}")
-        fields
+        def bindingString = ""
+        // 准备模板引擎
+        def path = servletContext.getRealPath("/")
+        def templateFileName = "${path}/viewTemplates/fieldTemplate.gsp"
+        def templateFile = new File(templateFileName)
+        def engine = new groovy.text.GStringTemplateEngine()
+        def template = engine.createTemplate(templateFile)
+        fields.each { e->
+            bindingString += template.make(e)
+        }
+        return bindingString
     }
 
     /*

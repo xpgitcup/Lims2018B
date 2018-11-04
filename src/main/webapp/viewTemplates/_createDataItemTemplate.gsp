@@ -5,12 +5,7 @@
             <!--主关键字的信息 -->
             <table>
                 <f:with bean="dataItem">
-                    <tr>
-                        <td>
-                            $keylabel
-                            <g:hiddenField name="dataKey.id" value="${dataKeyId}"/>
-                        </td>
-                    </tr>
+                    $mainKeyString
                 </f:with>
             </table>
             <!--子关键字的信息 -->
