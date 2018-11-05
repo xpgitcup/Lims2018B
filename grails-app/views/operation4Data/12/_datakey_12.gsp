@@ -1,0 +1,1 @@
+<div id='create-dataItem' class='content scaffold-create' role='main'><g:uploadForm controller='operation4Data' action='saveDataItem'><fieldset class='form'><table><f:with bean='dataItem'><tr><td><g:hiddenField name='dataKey.id' value='12'/></td><td></td></tr></f:with></table><table></table></fieldset></g:uploadForm></div>

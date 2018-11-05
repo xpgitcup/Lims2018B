@@ -3,9 +3,11 @@ package cn.edu.cup.os4Data
 import cn.edu.cup.dictionary.DataDictionary
 import cn.edu.cup.dictionary.DataItem
 import cn.edu.cup.dictionary.DataKey
+import cn.edu.cup.dictionary.DataKeyType
 import cn.edu.cup.system.JsFrame
 import grails.converters.JSON
 import grails.validation.ValidationException
+import groovy.xml.StreamingMarkupBuilder
 
 import static org.springframework.http.HttpStatus.CREATED
 import static org.springframework.http.HttpStatus.NO_CONTENT
@@ -138,83 +140,131 @@ class Operation4DataController {
     * */
 
     def downloadViewTemplate(DataKey dataKey) {
-        def path = servletContext.getRealPath("/")
-        /*
-        * 实际上输入包括两个部分：首先是主关键字的输入，然后是子关键字的输入。
-        * 两个部分的内容是一样的。
-        * 首先都包括一个隐藏的输入项：id, 也是名称、值。 两部分。（没有提示项）
-        * 然后是 提示、名称、值
-        * */
-        def binding = [
-                mainKeyString:"",
-                subKeyString:""
-        ]
-        // 构建mainKeyString
-        binding.mainKeyString = createFieldsBinding([dataKey], true)
-        // 构建subKeyString
-        binding.subKeyString = createFieldsBinding(dataKey.subDataKeys, false)
-        //--------------------------------------------------------------------------------------------------------------
-        // 准备模板引擎--最终的版本
-        def templateFileName = "${path}/viewTemplates/_createDataItemTemplate.gsp"
-        def templateFile = new File(templateFileName)
-        def engine = new groovy.text.GStringTemplateEngine()
-        def template = engine.createTemplate(templateFile)
-        // 目标文件
-        def currentPath = this.class.getResource("/").getPath()
-        def fileName = "${currentPath}/operation4Data/${dataKey.id}/_dataKey_${dataKey.id}.gsp"
+        def fileName = dataKeyViewFileName(dataKey)
         def file = new File(fileName)
         def dir = file.getParentFile()
         if (!dir.exists()) {
             dir.mkdir()
         }
         printf("生成输入模板%s\n", [fileName])
-        def outString = template.make(binding)      //匹配字符串，生成最终的文本
+        def outString = createDataItemViewTemplate(dataKey)
         def printer = new File(fileName).newPrintWriter('utf-8')    //写入文件
-        printer.println(outString)
+        printer.println(outString.toString())
         printer.close()
 
         redirect(action: "index")
     }
 
-    /**
-     * 生成数据--根（只有名称，没有value，）
-     * 后续的字段：名称，值
-     * 根据不同的类型，生成不同的界面元素
-     */
-    private List createFieldsBinding(dataKeys, isMainKey = true) {
-        def fields = []
-        dataKeys.eachWithIndex { DataKey entry, int i ->
-            def f = [:]
-            f.dataTag = "${entry.dataTag}"
-            if (isMainKey) {
-                f.dataKeyIdName = "dataKey.id"
-                f.dataKeyId = "${e.id}"
-            }  else {
-                f.dataKeyIdName = "subDataItems[${i}].dataValue"
-                f.value = "dataValue_${i}"
+    def createDataItemViewTemplate(DataKey dataKey) {
+        def dataKeyService
+        def dataItem = getNewDataItem(dataKey)
+        def builder = new StreamingMarkupBuilder()
+        def aux = [:]
+        dataItem.subDataItems.eachWithIndex { DataItem entry, int i ->
+            switch (entry.dataKey.dataKeyType) {
+                case DataKeyType.dataKeyEnum:
+                    def list = entry.dataKey?.enumItems()
+                    aux.i = list
+                    break;
+                case DataKeyType.dataKeyRef:
+                    def dataKeyId = 0
+                    if (entry.dataKey.appendParameter != "") {
+                        dataKeyId = Integer.parseInt(entry.dataKey.appendParameter)
+                    }
+                    def list = []
+                    if (dataKeyId > 0) {
+                        list = DataItem.findAllBydataKey(dataKeyService.get(dataKeyId))
+                    }
+                    aux.i = list
+                    break
             }
-            fields.add(f)
         }
-        println("${fields}")
-        def bindingString = ""
-        // 准备模板引擎
-        def path = servletContext.getRealPath("/")
-        def templateFileName = "${path}/viewTemplates/fieldTemplate.gsp"
-        def templateFile = new File(templateFileName)
-        def engine = new groovy.text.GStringTemplateEngine()
-        def template = engine.createTemplate(templateFile)
-        fields.each { e->
-            bindingString += template.make(e)
+        def viewString = builder.bind {
+            div(id: "create-dataItem", class: "content scaffold-create", role: "main") {
+                "g:uploadForm"(controller: "operation4Data", action: "saveDataItem") {
+                    fieldset(class: "form") {
+                        // 主关键字描述
+                        table {
+                            "f:with"(bean: "dataItem") {
+                                tr {
+                                    td {
+                                        label("${dataKey}")
+                                    }
+                                    td {
+                                        "g:hiddenField"(name: "dataKey.id", value: "${dataItem.dataKey.id}")
+                                    }
+                                }
+                            }
+                        }
+                        // 子关键字
+                        table {
+                            dataItem.subDataItems.eachWithIndex { DataItem entry, int i ->
+                                tr {
+                                    td {
+                                        label("${dataItem.subDataItems[i].dataKey.dataTag}")
+                                        "g:hiddenField"(name: "subDataItems[${i}].dataKey.id", value: "${dataItem.subDataItems[i].dataKey.id}")
+                                        "g : hiddenField"(name: "subDataItems[${i}].upDataItem.id", value: "${dataItem.id}")
+                                    }
+                                    switch (entry.dataKey.dataKeyType) {
+                                        case DataKeyType.dataKeyNormal:
+                                            td {
+                                                "g:textField"(name: "subDataItems[${i}].dataValue", id: "dataValue_${i}")
+                                            }
+                                            td {}
+                                            break;
+                                        case DataKeyType.dataKeyDate:
+                                            td {
+                                                input(type: "text", name: "subDataItems[${i}].dataValue", id: "dataValue_${i}", value: "${new java.util.Date()}", class: "datePicker")
+                                            }
+                                            td {}
+                                            break
+                                        case DataKeyType.dataKeyDateTime:
+                                            td {
+                                                input(type: "text", name: "subDataItems[${i}].dataValue", id: "dataValue_${i}", class: "dateTimePicker")
+                                            }
+                                            break;
+                                        case DataKeyType.dataKeyEnum:
+                                            td {
+                                                "g:select"(name: "subDataItems[${i}].dataValue", from: "${aux.i}", noSelection: "-Choose-")
+                                            }
+                                            td{}
+                                            break;
+                                        case DataKeyType.dataKeyFile:
+                                            td {
+                                                "g:textField"(name: "subDataItems[${i}].dataValue", id: "file_${i}")
+                                            }
+                                            td {
+                                                "g:hiddenField"(name: "uploadFilePath", value: "${entry.dataKey.appendParameter}")
+                                                "g:hiddenField"(name: "uploadFileDataKeyId", value: "${entry.dataKey.id}")
+                                                "g:hiddenField"(name: "uploadFileIndex", value: "${i}")
+                                                input(type: "file", name: "uploadFile", id: "input_${i}", onchange: "updateUploadFileName(${i})")
+                                            }
+                                            break;
+                                        case DataKeyType.dataKeyRef:
+                                            td{
+                                                "g:select"(name: "subDataItems[${i}].dataValue",
+                                                        from: "${aux.i}",
+                                                        optionKey: "id",
+                                                        noSelection: "\${['null': 'Select One...']}")
+                                            }
+                                            break;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
         }
-        return bindingString
+        return viewString
     }
 
     /*
     * 下载数据导入模板
-    * */
+    **/
 
     def downloadTemplate(DataKey dataKey) {
-        def path = servletContext.getRealPath("/") + "templates/datakey"
+        def path = servletContext.getRealPath("/ ") + " templates / datakey "
         //def fileName = dataKeyA.createTemplate(path)
         def fileName = excelService.createTemplate(dataKeyA, path)
         params.downLoadFileName = fileName
