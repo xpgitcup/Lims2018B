@@ -7,6 +7,7 @@ import cn.edu.cup.dictionary.DataKeyType
 import cn.edu.cup.system.JsFrame
 import grails.converters.JSON
 import grails.validation.ValidationException
+import groovy.xml.MarkupBuilder
 import groovy.xml.StreamingMarkupBuilder
 
 import static org.springframework.http.HttpStatus.CREATED
@@ -115,7 +116,6 @@ class Operation4DataController {
         }
     }
 
-
     /*
     *  数据项统计
     * */
@@ -158,7 +158,9 @@ class Operation4DataController {
     def createDataItemViewTemplate(DataKey dataKey) {
         def dataKeyService
         def dataItem = getNewDataItem(dataKey)
-        def builder = new StreamingMarkupBuilder()
+        //def builder = new StreamingMarkupBuilder()
+        def viewString = new StringWriter()
+        def builder = new MarkupBuilder(viewString)
         def aux = [:]
         dataItem.subDataItems.eachWithIndex { DataItem entry, int i ->
             switch (entry.dataKey.dataKeyType) {
@@ -179,83 +181,87 @@ class Operation4DataController {
                     break
             }
         }
-        def viewString = builder.bind {
-            div(id: "create-dataItem", class: "content scaffold-create", role: "main") {
-                "g:uploadForm"(controller: "operation4Data", action: "saveDataItem") {
-                    fieldset(class: "form") {
-                        // 主关键字描述
-                        table {
-                            "f:with"(bean: "dataItem") {
-                                tr {
-                                    td {
-                                        label("${dataKey}")
-                                    }
-                                    td {
-                                        "g:hiddenField"(name: "dataKey.id", value: "${dataItem.dataKey.id}")
-                                    }
+        //def viewString = builder.bind {
+        //'?xml'(version:"1.0", encoding:"UTF-8")
+        builder.div(id: "create-dataItem", class: "content scaffold-create", role: "main") {
+            "g:uploadForm"(controller: "operation4Data", action: "saveDataItem") {
+                fieldset(class: "form") {
+                    // 主关键字描述
+                    table {
+                        "f:with"(bean: "dataItem") {
+                            tr {
+                                td {
+                                    label("${dataKey}")
+                                }
+                                td {
+                                    "g:hiddenField"(name: "dataKey.id", value: "${dataItem.dataKey.id}")
                                 }
                             }
                         }
-                        // 子关键字
-                        table {
-                            dataItem.subDataItems.eachWithIndex { DataItem entry, int i ->
-                                tr {
-                                    td {
-                                        label("${dataItem.subDataItems[i].dataKey.dataTag}")
-                                        "g:hiddenField"(name: "subDataItems[${i}].dataKey.id", value: "${dataItem.subDataItems[i].dataKey.id}")
-                                        "g : hiddenField"(name: "subDataItems[${i}].upDataItem.id", value: "${dataItem.id}")
-                                    }
-                                    switch (entry.dataKey.dataKeyType) {
-                                        case DataKeyType.dataKeyNormal:
-                                            td {
-                                                "g:textField"(name: "subDataItems[${i}].dataValue", id: "dataValue_${i}")
-                                            }
-                                            td {}
-                                            break;
-                                        case DataKeyType.dataKeyDate:
-                                            td {
-                                                input(type: "text", name: "subDataItems[${i}].dataValue", id: "dataValue_${i}", value: "${new java.util.Date()}", class: "datePicker")
-                                            }
-                                            td {}
-                                            break
-                                        case DataKeyType.dataKeyDateTime:
-                                            td {
-                                                input(type: "text", name: "subDataItems[${i}].dataValue", id: "dataValue_${i}", class: "dateTimePicker")
-                                            }
-                                            break;
-                                        case DataKeyType.dataKeyEnum:
-                                            td {
-                                                "g:select"(name: "subDataItems[${i}].dataValue", from: "${aux.i}", noSelection: "-Choose-")
-                                            }
-                                            td{}
-                                            break;
-                                        case DataKeyType.dataKeyFile:
-                                            td {
-                                                "g:textField"(name: "subDataItems[${i}].dataValue", id: "file_${i}")
-                                            }
-                                            td {
-                                                "g:hiddenField"(name: "uploadFilePath", value: "${entry.dataKey.appendParameter}")
-                                                "g:hiddenField"(name: "uploadFileDataKeyId", value: "${entry.dataKey.id}")
-                                                "g:hiddenField"(name: "uploadFileIndex", value: "${i}")
-                                                input(type: "file", name: "uploadFile", id: "input_${i}", onchange: "updateUploadFileName(${i})")
-                                            }
-                                            break;
-                                        case DataKeyType.dataKeyRef:
-                                            td{
-                                                "g:select"(name: "subDataItems[${i}].dataValue",
-                                                        from: "${aux.i}",
-                                                        optionKey: "id",
-                                                        noSelection: "\${['null': 'Select One...']}")
-                                            }
-                                            break;
-                                    }
+                    }
+                    // 子关键字
+                    table {
+                        dataItem.subDataItems.eachWithIndex { DataItem entry, int i ->
+                            tr {
+                                td {
+                                    label("${dataItem.subDataItems[i].dataKey.dataTag}")
+                                    "g:hiddenField"(name: "subDataItems[${i}].dataKey.id", value: "${dataItem.subDataItems[i].dataKey.id}")
+                                    "g:hiddenField"(name: "subDataItems[${i}].upDataItem.id", value: "${dataItem.id}")
+                                }
+                                switch (entry.dataKey.dataKeyType) {
+                                    case DataKeyType.dataKeyNormal:
+                                        td {
+                                            "g:textField"(name: "subDataItems[${i}].dataValue", id: "dataValue_${i}")
+                                        }
+                                        td {}
+                                        break;
+                                    case DataKeyType.dataKeyDate:
+                                        td {
+                                            input(type: "text", name: "subDataItems[${i}].dataValue", id: "dataValue_${i}", value: "${new java.util.Date()}", class: "datePicker")
+                                        }
+                                        td {}
+                                        break
+                                    case DataKeyType.dataKeyDateTime:
+                                        td {
+                                            input(type: "text", name: "subDataItems[${i}].dataValue", id: "dataValue_${i}", class: "dateTimePicker")
+                                        }
+                                        break;
+                                    case DataKeyType.dataKeyEnum:
+                                        td {
+                                            //select(name: "subDataItems[${i}].dataValue", from:"${aux.i}")
+                                        }
+                                        td {}
+                                        break;
+                                    case DataKeyType.dataKeyFile:
+                                        td {
+                                            "g:textField"(name: "subDataItems[${i}].dataValue", id: "file_${i}")
+                                        }
+                                        td {
+                                            "g:hiddenField"(name: "uploadFilePath", value: "${entry.dataKey.appendParameter}")
+                                            "g:hiddenField"(name: "uploadFileDataKeyId", value: "${entry.dataKey.id}")
+                                            "g:hiddenField"(name: "uploadFileIndex", value: "${i}")
+                                            input(type: "file", name: "uploadFile", id: "input_${i}", onchange: "updateUploadFileName(${i})")
+                                        }
+                                        break;
+                                    case DataKeyType.dataKeyRef:
+                                        td {
+                                            "g:select"(name: "subDataItems[${i}].dataValue",
+                                                    from: "${aux.i}",
+                                                    optionKey: "id",
+                                                    noSelection: "\${['null': 'Select One...']}")
+                                        }
+                                        break;
                                 }
                             }
                         }
                     }
                 }
+                fieldset(class: "buttons") {
+                    "g:submitButton"(name: "create", class: "save", value: "Create")
+                }
             }
         }
+        //}
         return viewString
     }
 
@@ -286,7 +292,6 @@ class Operation4DataController {
             result
         }
     }
-
 
     /*
     * 删除数据模型
