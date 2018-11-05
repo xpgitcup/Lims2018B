@@ -54,16 +54,7 @@ class Operation4DataController {
 
     def createDataItem(DataKey dataKey) {
         println("createDataItem ${params}")
-        def dataItem = new DataItem(dataKey: dataKey)
-        def newSubItems = []
-        dataKey.subDataKeys.each { e ->
-            def item = new DataItem(
-                    dataKey: e,
-                    upDataItem: dataItem
-            )
-            newSubItems.add(item)
-        }
-        dataItem.subDataItems = newSubItems
+        DataItem dataItem = getNewDataItem(dataKey)
 
         // 缺省的情况
         def view = 'createDataItem'
@@ -84,6 +75,20 @@ class Operation4DataController {
         } else {
             respond dataItem
         }
+    }
+
+    private DataItem getNewDataItem(DataKey dataKey) {
+        def dataItem = new DataItem(dataKey: dataKey)
+        def newSubItems = []
+        dataKey.subDataKeys.each { e ->
+            def item = new DataItem(
+                    dataKey: e,
+                    upDataItem: dataItem
+            )
+            newSubItems.add(item)
+        }
+        dataItem.subDataItems = newSubItems
+        dataItem
     }
 
     /*
@@ -145,9 +150,9 @@ class Operation4DataController {
                 subKeyString:""
         ]
         // 构建mainKeyString
-        binding.mainKeyString = createFieldsBinding([dataKey])
+        binding.mainKeyString = createFieldsBinding([dataKey], true)
         // 构建subKeyString
-        binding.subKeyString = createFieldsBinding(dataKey.subDataKeys)
+        binding.subKeyString = createFieldsBinding(dataKey.subDataKeys, false)
         //--------------------------------------------------------------------------------------------------------------
         // 准备模板引擎--最终的版本
         def templateFileName = "${path}/viewTemplates/_createDataItemTemplate.gsp"
