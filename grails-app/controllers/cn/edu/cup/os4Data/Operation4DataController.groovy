@@ -156,7 +156,6 @@ class Operation4DataController {
     }
 
     def createDataItemViewTemplate(DataKey dataKey) {
-        def dataKeyService
         def dataItem = getNewDataItem(dataKey)
         //def builder = new StreamingMarkupBuilder()
         def viewString = new StringWriter()
@@ -166,23 +165,34 @@ class Operation4DataController {
             switch (entry.dataKey.dataKeyType) {
                 case DataKeyType.dataKeyEnum:
                     def list = entry.dataKey?.enumItems()
-                    aux.i = list
+                    List tmp = getQuotationList(list)
+                    aux.i = tmp
                     break;
                 case DataKeyType.dataKeyRef:
-                    def dataKeyId = 0
+                    def refDataKeyId = 0
                     if (entry.dataKey.appendParameter != "") {
-                        dataKeyId = Integer.parseInt(entry.dataKey.appendParameter)
+                        refDataKeyId = Integer.parseInt(entry.dataKey.appendParameter)
                     }
                     def list = []
-                    if (dataKeyId > 0) {
-                        list = DataItem.findAllBydataKey(dataKeyService.get(dataKeyId))
+                    if (refDataKeyId > 0) {
+                        list = DataItem.findAllByDataKey(dataKeyService.get(refDataKeyId))
                     }
-                    aux.i = list
+                    List tmp = getQuotationList(list)
+                    aux.i = tmp
+                    break
+                case DataKeyType.dataKeyNormal:
+                    break
+                case DataKeyType.dataKeyDate:
+                    break
+                case DataKeyType.dataKeyDateTime:
+                    break
+                case DataKeyType.dataKeyFile:
                     break
             }
         }
         //def viewString = builder.bind {
         //'?xml'(version:"1.0", encoding:"UTF-8")
+        builder.setDoubleQuotes(true)
         builder.div(id: "create-dataItem", class: "content scaffold-create", role: "main") {
             "g:uploadForm"(controller: "operation4Data", action: "saveDataItem") {
                 fieldset(class: "form") {
@@ -228,7 +238,8 @@ class Operation4DataController {
                                         break;
                                     case DataKeyType.dataKeyEnum:
                                         td {
-                                            //select(name: "subDataItems[${i}].dataValue", from:"${aux.i}")
+                                            //select(name: "subDataItems[${i}].dataValue", from:"${aux.i}", id: "dataValue_${i}")
+                                            "g:select"(name: "subDataItems[${i}].dataValue", from:"${aux.i}", id: "dataValue_${i}")
                                         }
                                         td {}
                                         break;
@@ -263,6 +274,14 @@ class Operation4DataController {
         }
         //}
         return viewString
+    }
+
+    private List getQuotationList(list) {
+        def tmp = []
+        list.each { e ->
+            tmp.add("\'${e}\'")
+        }
+        tmp
     }
 
     /*

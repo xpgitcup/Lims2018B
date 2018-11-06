@@ -68,6 +68,9 @@ function switchTabs(isTree) {
 * 创建数据项
 * */
 function createDataItem(id) {
+    // 输入首先要选择。
+    selectDataKey(id)
+    // 然后才能输入
     console.info("createDataItem: " + id);
     operation4DataDiv.tabs("select", "数据项");
     ajaxRun("operation4Data/createDataItem", id, "list" + "数据项" + "Div");

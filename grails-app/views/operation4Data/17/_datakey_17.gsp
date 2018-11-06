@@ -1,1 +1,55 @@
-<?xml version='1.0' encoding='UTF-8'/><div id='create-dataItem' class='content scaffold-create' role='main'><g:uploadForm controller='operation4Data' action='saveDataItem'><fieldset class='form'><table><f:with bean='dataItem'><tr><td><label>&#x6d4b;&#x8bd5;&#x6027;&#x6570;&#x636e;&#x5b57;&#x5178;4/(10).&#x6570;&#x636e;&#x6807;&#x7b7e;4.3/(&#x6a21;&#x578b;)</label></td><td><g:hiddenField name='dataKey.id' value='17'/></td></tr></f:with></table><table><tr><td><label>key4.3.0 dataKeyNormal</label><g:hiddenField name='subDataItems[0].dataKey.id' value='18'/><g : hiddenField name='subDataItems[0].upDataItem.id' value='null'/></td><td><g:textField name='subDataItems[0].dataValue' id='dataValue_0'/></td><td></td></tr><tr><td><label>key4.3.1 dataKeyDate</label><g:hiddenField name='subDataItems[1].dataKey.id' value='19'/><g : hiddenField name='subDataItems[1].upDataItem.id' value='null'/></td><td><input type='text' name='subDataItems[1].dataValue' id='dataValue_1' value='Mon Nov 05 22:06:38 CST 2018' class='datePicker'/></td><td></td></tr><tr><td><label>key4.3.2 dataKeyDateTime</label><g:hiddenField name='subDataItems[2].dataKey.id' value='20'/><g : hiddenField name='subDataItems[2].upDataItem.id' value='null'/></td><td><input type='text' name='subDataItems[2].dataValue' id='dataValue_2' class='dateTimePicker'/></td></tr></table></fieldset></g:uploadForm></div>
+<div id='create-dataItem' class='content scaffold-create' role='main'>
+  <g:uploadForm controller='operation4Data' action='saveDataItem'>
+    <fieldset class='form'>
+      <table>
+        <f:with bean='dataItem'>
+          <tr>
+            <td>
+              <label>测试性数据字典4/(10).数据标签4.3/(模型)</label>
+            </td>
+            <td>
+              <g:hiddenField name='dataKey.id' value='17' />
+            </td>
+          </tr>
+        </f:with>
+      </table>
+      <table>
+        <tr>
+          <td>
+            <label>key4.3.0 dataKeyNormal</label>
+            <g:hiddenField name='subDataItems[0].dataKey.id' value='18' />
+            <g:hiddenField name='subDataItems[0].upDataItem.id' value='null' />
+          </td>
+          <td>
+            <g:textField name='subDataItems[0].dataValue' id='dataValue_0' />
+          </td>
+          <td />
+        </tr>
+        <tr>
+          <td>
+            <label>key4.3.1 dataKeyDate</label>
+            <g:hiddenField name='subDataItems[1].dataKey.id' value='19' />
+            <g:hiddenField name='subDataItems[1].upDataItem.id' value='null' />
+          </td>
+          <td>
+            <input type='text' name='subDataItems[1].dataValue' id='dataValue_1' value='Tue Nov 06 08:49:53 CST 2018' class='datePicker' />
+          </td>
+          <td />
+        </tr>
+        <tr>
+          <td>
+            <label>key4.3.2 dataKeyDateTime</label>
+            <g:hiddenField name='subDataItems[2].dataKey.id' value='20' />
+            <g:hiddenField name='subDataItems[2].upDataItem.id' value='null' />
+          </td>
+          <td>
+            <input type='text' name='subDataItems[2].dataValue' id='dataValue_2' class='dateTimePicker' />
+          </td>
+        </tr>
+      </table>
+    </fieldset>
+    <fieldset class='buttons'>
+      <g:submitButton name='create' class='save' value='Create' />
+    </fieldset>
+  </g:uploadForm>
+</div>

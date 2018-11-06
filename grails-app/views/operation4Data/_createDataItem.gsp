@@ -118,7 +118,7 @@
                             <td>
                                 <!--g:textField name="subDataItems[${i}].dataValue" id="dataValue_${i}"/-->
                                 <g:select name="subDataItems[${i}].dataValue"
-                                          from="${cn.edu.cup.dictionary.dataItem.findAllBydataKey(cn.edu.cup.dictionary.dataKey.get(Integer.parseInt(subItem.dataKey.appendParameter)))}"
+                                          from="${cn.edu.cup.dictionary.dataItem.findAllByDataKey(cn.edu.cup.dictionary.dataKey.get(Integer.parseInt(subItem.dataKey.appendParameter)))}"
                                           optionKey="id"
                                           noSelection="${['null': 'Select One...']}"/>
                             </td>
