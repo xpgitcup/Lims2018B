@@ -455,6 +455,7 @@ class Operation4DataController {
 
     private GString dataKeyViewFileName(DataKey e) {
         def currentPath = this.class.getResource("/").getPath()
+        println("创建视图文件：${currentPath}")
         def fileName = "${currentPath}operation4Data/${e.id}/_datakey_${e.id}.gsp"
         fileName
     }
