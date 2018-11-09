@@ -65,8 +65,8 @@ class Operation4DataController {
         def dataKeyViewFileName = dataKeyViewFileName(dataKey)
         def dataKeyViewFile = new File(dataKeyViewFileName)
         if (dataKeyViewFile.exists()) {
-            //view = dataKeyViewFileName
-            view = "${dataKey.id}/datakey_${dataKey.id}"
+            view = dataKeyViewFileName
+            //view = "${dataKey.id}/datakey_${dataKey.id}"
         }
         // 如果用户指定，使用用户指定的
         if (params.view) {
@@ -144,7 +144,11 @@ class Operation4DataController {
         def file = new File(fileName)
         def dir = file.getParentFile()
         if (!dir.exists()) {
-            dir.mkdir()
+            if (dir.mkdir()) {
+                println("创建目录${dir}")
+            } else {
+                println("怎么出错了呢？${dir}")
+            }
         }
         printf("生成输入模板%s\n", [fileName])
         def outString = createDataItemViewTemplate(dataKey)
@@ -454,8 +458,9 @@ class Operation4DataController {
     }
 
     private GString dataKeyViewFileName(DataKey e) {
-        def currentPath = this.class.getResource("/").getPath()
-        def fileName = "${currentPath}operation4Data/${e.id}/_datakey_${e.id}.gsp"
+        //def currentPath = this.class.getResource("/").getPath()     //这个不对，会指向classes目录下
+        def webRootPath = servletContext.getRealPath("/")
+        def fileName = "${webRootPath}viewTemplates/operation4Data/${e.id}/_datakey_${e.id}.gsp"
         fileName
     }
 
