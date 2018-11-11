@@ -65,8 +65,9 @@ class Operation4DataController {
         def dataKeyViewFileName = dataKeyViewFileName(dataKey)
         def dataKeyViewFile = new File(dataKeyViewFileName)
         if (dataKeyViewFile.exists()) {
-            view = dataKeyViewFileName
-            //view = "${dataKey.id}/datakey_${dataKey.id}"
+            // 模板的路径都是相对的，目前无法控制
+            //view = "${dataKey.id}/dataKey_${dataKey.id}"
+            view = "dataKey_${dataKey.id}"
         }
         // 如果用户指定，使用用户指定的
         if (params.view) {
@@ -78,6 +79,14 @@ class Operation4DataController {
         } else {
             respond dataItem
         }
+    }
+
+    private def dataKeyViewFileName(DataKey dataKey) {
+        def nowPath = this.class.getResource("/").getPath()
+        //def actionName = this.getActionName()
+        def controllerName = this.controllerName
+        //return "${nowPath}${controllerName}/${dataKey.id}/_dataKey_${dataKey.id}.gsp"
+        return "${nowPath}${controllerName}/_dataKey_${dataKey.id}.gsp"
     }
 
     private DataItem getNewDataItem(DataKey dataKey) {
@@ -137,6 +146,7 @@ class Operation4DataController {
     /*
     * 下载输入模板
     * 要手动创建main/webapp目录，这样dir = request.getRealPath("/")才能找到该目录
+    * 创建文件的时候，
     * */
 
     def downloadViewTemplate(DataKey dataKey) {
@@ -455,13 +465,6 @@ class Operation4DataController {
         } else {
             respond dataKeyList
         }
-    }
-
-    private GString dataKeyViewFileName(DataKey e) {
-        //def currentPath = this.class.getResource("/").getPath()     //这个不对，会指向classes目录下
-        def webRootPath = servletContext.getRealPath("/")
-        def fileName = "${webRootPath}viewTemplates/operation4Data/${e.id}/_datakey_${e.id}.gsp"
-        fileName
     }
 
     //==================================================================================================================

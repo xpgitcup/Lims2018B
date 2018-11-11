@@ -54,7 +54,7 @@
     <!--asset:javascript src="jqpagination/jquery.jqpagination.min.js"/-->
 
     <!--引入拓扑图工具 -->
-    <asset:javascript src="jtopo/jtopo-0.4.8-min.js"/>
+    <!--asset:javascript src="jtopo/jtopo-0.4.8-min.js"/-->
 
     <!--引入绘图工具 -->
     <asset:javascript src="echarts/echarts.js"/>
