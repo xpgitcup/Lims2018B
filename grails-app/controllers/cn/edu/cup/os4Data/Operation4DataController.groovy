@@ -66,8 +66,8 @@ class Operation4DataController {
         def dataKeyViewFile = new File(dataKeyViewFileName)
         if (dataKeyViewFile.exists()) {
             // 模板的路径都是相对的，目前无法控制
-            //view = "${dataKey.id}/dataKey_${dataKey.id}"
-            view = "dataKey_${dataKey.id}"
+            view = "${dataKey.id}/dataKey_${dataKey.id}"
+            //view = "dataKey_${dataKey.id}"
         }
         // 如果用户指定，使用用户指定的
         if (params.view) {
@@ -85,8 +85,8 @@ class Operation4DataController {
         def nowPath = this.class.getResource("/").getPath()
         //def actionName = this.getActionName()
         def controllerName = this.controllerName
-        //return "${nowPath}${controllerName}/${dataKey.id}/_dataKey_${dataKey.id}.gsp"
-        return "${nowPath}${controllerName}/_dataKey_${dataKey.id}.gsp"
+        return "${nowPath}${controllerName}/${dataKey.id}/_dataKey_${dataKey.id}.gsp"
+        //return "${nowPath}${controllerName}/_dataKey_${dataKey.id}.gsp"
     }
 
     private DataItem getNewDataItem(DataKey dataKey) {

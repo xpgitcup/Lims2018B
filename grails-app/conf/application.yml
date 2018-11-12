@@ -126,12 +126,6 @@ environments:
             #url: jdbc:h2:mem:testDb;MVCC=TRUE;LOCK_TIMEOUT=10000;DB_CLOSE_ON_EXIT=FALSE
             url: jdbc:mysql://localhost:3306/lims2018adb?zeroDateTimeBehavior=convertToNull
     production:
-        # 我增加的，用于动态识别gsp
-        grails:
-            gsp:
-                enable:
-                    reload: true
-        # 原来的
         dataSource:
             dbCreate: none
             #url: jdbc:h2:./prodDb;MVCC=TRUE;LOCK_TIMEOUT=10000;DB_CLOSE_ON_EXIT=FALSE
