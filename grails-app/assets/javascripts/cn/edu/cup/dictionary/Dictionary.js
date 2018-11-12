@@ -72,7 +72,7 @@ function createDataItem(id) {
     //selectDataKey(id) //不要直接调用，把代码插进来。
     $.cookie("currentDataKey", id)
     console.info("记录当前模型：" + id);
-    //$("#currentDataKey").html(id);
+    $("#currentDataKey").html(id);
     // 然后才能输入
     console.info("createDataItem: " + id);
     operation4DataDiv.tabs("select", "数据项");

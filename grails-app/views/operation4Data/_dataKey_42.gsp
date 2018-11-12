@@ -32,7 +32,7 @@
             <g:hiddenField name="subDataItems[1].upDataItem.id" value="null" />
           </td>
           <td>
-            <input type="text" name="subDataItems[1].dataValue" id="dataValue_1" value="Sun Nov 11 11:37:29 CST 2018" class="datePicker" />
+            <input type="text" name="subDataItems[1].dataValue" id="dataValue_1" value="Sun Nov 11 22:34:48 CST 2018" class="datePicker" />
           </td>
           <td />
         </tr>
