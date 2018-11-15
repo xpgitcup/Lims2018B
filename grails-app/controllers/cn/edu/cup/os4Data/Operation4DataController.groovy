@@ -60,14 +60,16 @@ class Operation4DataController {
         DataItem dataItem = getNewDataItem(dataKey)
 
         // 缺省的情况
+        def useStaticTemplate = false
         def view = 'createDataItem'
+        String responseText
         // 如果有生成的视图，就是用生成的静态视图
         def dataKeyViewFileName = dataKeyViewFileName(dataKey)
         def dataKeyViewFile = new File(dataKeyViewFileName)
         if (dataKeyViewFile.exists()) {
-            // 模板的路径都是相对的，目前无法控制
-            view = "${dataKey.id}/dataKey_${dataKey.id}"
-            //view = "dataKey_${dataKey.id}"
+            def template = new groovy.text.StreamingTemplateEngine().createTemplate(dataKeyViewFile.text)
+            responseText = template.make([dataItem: dataItem])
+            useStaticTemplate = true
         }
         // 如果用户指定，使用用户指定的
         if (params.view) {
@@ -75,7 +77,11 @@ class Operation4DataController {
         }
 
         if (request.xhr) {
-            render(template: view, model: [dataItem: dataItem])
+            if (useStaticTemplate) {
+                render(responseText)
+            } else {
+                render(template: view, model: [dataItem: dataItem])
+            }
         } else {
             respond dataItem
         }
@@ -208,6 +214,7 @@ class Operation4DataController {
         //'?xml'(version:"1.0", encoding:"UTF-8")
         builder.setDoubleQuotes(true)
         builder.div(id: "create-dataItem", class: "content scaffold-create", role: "main") {
+            h1("静态生成的模板")
             "g:uploadForm"(controller: "operation4Data", action: "saveDataItem") {
                 fieldset(class: "form") {
                     // 主关键字描述
