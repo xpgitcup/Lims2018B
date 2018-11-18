@@ -215,7 +215,7 @@ class Operation4DataController {
         builder.setDoubleQuotes(true)
         builder.div(id: "create-dataItem", class: "content scaffold-create", role: "main") {
             h1("静态生成的模板")
-            "g:uploadForm"(controller: "operation4Data", action: "saveDataItem") {
+            builder.form(action: "operation4Data/saveDataItem", method: "post") {
                 fieldset(class: "form") {
                     // 主关键字描述
                     table {
@@ -260,7 +260,7 @@ class Operation4DataController {
                                     case DataKeyType.dataKeyEnum:
                                         td {
                                             //select(name: "subDataItems[${i}].dataValue", from:"${aux.i}", id: "dataValue_${i}")
-                                            "g:select"(name: "subDataItems[${i}].dataValue", from:"${aux.i}", id: "dataValue_${i}")
+                                            "g:select"(name: "subDataItems[${i}].dataValue", from: "${aux.i}", id: "dataValue_${i}")
                                         }
                                         td {}
                                         break;
@@ -289,7 +289,8 @@ class Operation4DataController {
                     }
                 }
                 fieldset(class: "buttons") {
-                    "g:submitButton"(name: "create", class: "save", value: "Create")
+                    //"g:submitButton"(name: "create", class: "save", value: "Create")
+                    input(type: "submit", name: "create", class: "save", value: "Create")
                 }
             }
         }
