@@ -61,6 +61,25 @@ function switchTabs(isTree) {
 //======================================================================================================================
 // 数据模型基本处理函数
 
+/*
+* 处理文件上传
+* */
+function updateUploadFileName(id) {
+    console.info(id);
+    console.info("文件上传...");
+    var ainput = "input_" + id;
+    var afile = "file_" + id;
+    var aainput = document.getElementById(ainput);
+    var aafile = document.getElementById(afile);
+    var fn = aainput.value
+    var k = fn.lastIndexOf('/')
+    console.info(aainput);
+    console.info(aainput.files.length);
+    console.info(aafile);
+    aafile.value = aainput.files[0].name;
+    console.info(aainput.value);
+}
+
 //======================================================================================================================
 // 数据项处理函数
 
@@ -76,7 +95,7 @@ function createDataItem(id) {
     $("#currentDataKey").html(id);
     // 然后才能输入
     operation4DataDiv.tabs("select", "数据项");
-    ajaxRun("operation4Data/createDataItem", id, "list" + "数据项" + "Div");
+    ajaxRunEx("operation4Data/createDataItem", id, "list" + "数据项" + "Div", processDateTime);
 }
 
 

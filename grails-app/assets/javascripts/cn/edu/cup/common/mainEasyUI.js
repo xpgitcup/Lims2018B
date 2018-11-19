@@ -39,21 +39,6 @@ $(function () {
     }
 });
 
-function processDateTime() {
-    $("input.datePicker").datepicker({
-        showButtonPanel: true,
-        dateFormat: "yy-mm-dd",
-        defaultDate: 0
-    });
-
-    $("input.dateTimePicker").datetimepicker({
-        format: 'Y-m-d H:i',
-        defaultDate: new Date()
-    });
-
-    console.info("处理日期时间....")
-}
-
 function showSytemMenu() {
     var systemMenuList = getSystemMenuList();
     //console.info("获取的菜单：");

@@ -142,5 +142,8 @@
     </g:uploadForm>
 <!--/g:form-->
 </div>
+<g:javascript>
+    processDateTime();
+</g:javascript>
 </body>
 </html>

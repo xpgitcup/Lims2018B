@@ -210,7 +210,7 @@ class Operation4DataController {
         builder.setDoubleQuotes(true)
         builder.html {
             head {
-                meta(name: "layout", content: "main")
+                builder.meta(name: "layout", content: "main")
             }
             body {
                 generateDivContext(builder, dataKey, dataItem, aux)
@@ -273,7 +273,9 @@ class Operation4DataController {
                                                 }
                                             }
                                         }
-                                        td {}
+                                        td {
+                                            h1("附加信息：${entry.dataKey.appendParameter}")
+                                        }
                                         break;
                                     case DataKeyType.dataKeyFile:
                                         td {
@@ -293,6 +295,9 @@ class Operation4DataController {
                                                     option(value: "${e}", "${e}")
                                                 }
                                             }
+                                        }
+                                        td{
+                                            h1("附加信息：${entry.dataKey.appendParameter}")
                                         }
                                         break;
                                 }

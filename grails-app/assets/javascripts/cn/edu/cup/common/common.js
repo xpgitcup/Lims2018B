@@ -140,3 +140,43 @@ function ajaxRun(url, id, divId) {
     }
 }
 
+/*
+ * 通用的ajax执行函数扩展
+ * */
+function ajaxRunEx(url, id, divId, nextFunction) {
+    //console.info(url + '---' + id);
+    //console.info("当前路径:" + window.location)
+    var nextFunction = eval(nextFunction)
+    if (id != null) {
+        $.ajax({
+            type: 'POST',
+            url: url,
+            data: {id: id},
+            success: function (data, textStatus) {
+                $('#' + divId).html(data);
+                //console.info(data);   //调试用的
+                nextFunction();
+            },
+            error: function (XMLHttpRequest, textStatus, errorThrown) {
+                console.info(XMLHttpRequest);
+                console.info(textStatus);
+                console.info(errorThrown);
+            }
+        });
+    } else {
+        $.ajax({
+            type: 'POST',
+            url: url,
+            success: function (data, textStatus) {
+                $('#' + divId).html(data);
+                //console.info(data);   //调试用的
+                nextFunction();
+            },
+            error: function (XMLHttpRequest, textStatus, errorThrown) {
+                console.info(XMLHttpRequest);
+                console.info(textStatus);
+                console.info(errorThrown);
+            }
+        });
+    }
+}

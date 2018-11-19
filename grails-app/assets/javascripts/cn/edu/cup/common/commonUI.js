@@ -55,7 +55,7 @@ function tabPagesManagerWithPagination(tabsName, tabNameList, listFunction, coun
 
         tabsDiv.tabs('add', {
             title: title,
-            closable:false
+            closable: false
         })
 
         //插入到tab中
@@ -143,5 +143,23 @@ function loadTabPageDefaultData(title, listFunction, countFunction) {
     var totalCount = countFunction(title);
     console.info("当前页：" + title + ":" + currentPage + "总数：" + totalCount);
     listFunction(title, currentPage, cpageSize)
+}
+
+/*
+* 处理日期+时间的输入
+* */
+function processDateTime() {
+    $("input.datePicker").datepicker({
+        showButtonPanel: true,
+        dateFormat: "yy-mm-dd",
+        defaultDate: 0
+    });
+
+    $("input.dateTimePicker").datetimepicker({
+        format: 'Y-m-d H:i',
+        defaultDate: new Date()
+    });
+
+    console.info("处理日期时间......")
 }
 
