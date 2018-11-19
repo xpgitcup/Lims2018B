@@ -90,7 +90,7 @@ class Operation4DataController {
     private def dataKeyViewFileName(DataKey dataKey) {
         def nowPath = this.class.getResource("/").getPath()
         //def actionName = this.getActionName()
-        def controllerName = this.controllerName
+        def controllerName = "userViewTemplates"//this.controllerName
         return "${nowPath}${controllerName}/${dataKey.id}/_dataKey_${dataKey.id}.gsp"
         //return "${nowPath}${controllerName}/_dataKey_${dataKey.id}.gsp"
     }
@@ -187,6 +187,7 @@ class Operation4DataController {
                     def list = entry.dataKey?.enumItems()
                     List tmp = getQuotationList(list)
                     aux.i = tmp
+                    println("Enum ${i} ${tmp}")
                     break;
                 case DataKeyType.dataKeyRef:
                     def refDataKeyId = 0
@@ -198,7 +199,7 @@ class Operation4DataController {
                         list = DataItem.findAllByDataKey(dataKeyService.get(refDataKeyId))
                     }
                     List tmp = getQuotationList(list)
-                    aux.i = tmp
+                    aux.i = list
                     break
                 case DataKeyType.dataKeyNormal:
                     break
@@ -225,7 +226,7 @@ class Operation4DataController {
                                     label("${dataKey}")
                                 }
                                 td {
-                                    "g:hiddenField"(name: "dataKey.id", value: "${dataItem.dataKey.id}")
+                                    input(type: "hidden", name: "dataKey.id", value: "${dataItem.dataKey.id}")
                                 }
                             }
                         }
@@ -236,13 +237,13 @@ class Operation4DataController {
                             tr {
                                 td {
                                     label("${dataItem.subDataItems[i].dataKey.dataTag}")
-                                    "g:hiddenField"(name: "subDataItems[${i}].dataKey.id", value: "${dataItem.subDataItems[i].dataKey.id}")
-                                    "g:hiddenField"(name: "subDataItems[${i}].upDataItem.id", value: "${dataItem.id}")
+                                    input(type: "hidden", name: "subDataItems[${i}].dataKey.id", value: "${dataItem.subDataItems[i].dataKey.id}")
+                                    input(type: "hidden", name: "subDataItems[${i}].upDataItem.id", value: "${dataItem.id}")
                                 }
                                 switch (entry.dataKey.dataKeyType) {
                                     case DataKeyType.dataKeyNormal:
                                         td {
-                                            "g:textField"(name: "subDataItems[${i}].dataValue", id: "dataValue_${i}")
+                                            input(name: "subDataItems[${i}].dataValue", id: "dataValue_${i}")
                                         }
                                         td {}
                                         break;
@@ -259,28 +260,34 @@ class Operation4DataController {
                                         break;
                                     case DataKeyType.dataKeyEnum:
                                         td {
-                                            //select(name: "subDataItems[${i}].dataValue", from:"${aux.i}", id: "dataValue_${i}")
-                                            "g:select"(name: "subDataItems[${i}].dataValue", from: "${aux.i}", id: "dataValue_${i}")
+                                            //"g:select"(name: "subDataItems[${i}].dataValue", from: "${aux.i}", id: "dataValue_${i}")
+                                            //builder.select(name: "subDataItems[${i}].dataValue", from: "${aux.i}", id: "dataValue_${i}")
+                                            builder.select(name: "subDataItems[${i}].dataValue", id: "dataValue_${i}") {
+                                                entry.dataKey.enumItems().each { e->
+                                                    option(value: "${e}", "${e}")
+                                                }
+                                            }
                                         }
                                         td {}
                                         break;
                                     case DataKeyType.dataKeyFile:
                                         td {
-                                            "g:textField"(name: "subDataItems[${i}].dataValue", id: "file_${i}")
+                                            input(type: "text", name: "subDataItems[${i}].dataValue", id: "file_${i}")
                                         }
                                         td {
-                                            "g:hiddenField"(name: "uploadFilePath", value: "${entry.dataKey.appendParameter}")
-                                            "g:hiddenField"(name: "uploadFileDataKeyId", value: "${entry.dataKey.id}")
-                                            "g:hiddenField"(name: "uploadFileIndex", value: "${i}")
+                                            input(type: "hidden", name: "uploadFilePath", value: "${entry.dataKey.appendParameter}")
+                                            input(type: "hidden", name: "uploadFileDataKeyId", value: "${entry.dataKey.id}")
+                                            input(type: "hidden", name: "uploadFileIndex", value: "${i}")
                                             input(type: "file", name: "uploadFile", id: "input_${i}", onchange: "updateUploadFileName(${i})")
                                         }
                                         break;
                                     case DataKeyType.dataKeyRef:
                                         td {
-                                            "g:select"(name: "subDataItems[${i}].dataValue",
-                                                    from: "${aux.i}",
-                                                    optionKey: "id",
-                                                    noSelection: "\${['null': 'Select One...']}")
+                                            builder.select(name: "subDataItems[${i}].dataValue", id: "dataValue_${i}") {
+                                                aux.i.each { e->
+                                                    option(value: "${e}", "${e}")
+                                                }
+                                            }
                                         }
                                         break;
                                 }

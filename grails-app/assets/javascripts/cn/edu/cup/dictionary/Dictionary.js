@@ -70,11 +70,11 @@ function switchTabs(isTree) {
 function createDataItem(id) {
     // 输入首先要选择。
     //selectDataKey(id) //不要直接调用，把代码插进来。
-    $.cookie("currentDataKey", id)
     console.info("记录当前模型：" + id);
-    //$("#currentDataKey").html(id);
-    // 然后才能输入
     console.info("createDataItem: " + id);
+    $.cookie("currentDataKey", id)
+    $("#currentDataKey").html(id);
+    // 然后才能输入
     operation4DataDiv.tabs("select", "数据项");
     ajaxRun("operation4Data/createDataItem", id, "list" + "数据项" + "Div");
 }
