@@ -98,6 +98,7 @@
                                           noSelection="['': '-Choose-']"/>
                             </td>
                             <td>
+                                <h1>附加信息：${subItem.dataKey.appendParameter}</h1>
                             </td>
                         </g:if>
                     <!--针对文件的-->
@@ -116,13 +117,18 @@
                     <!--针对引用类型的-->
                         <g:if test="${subItem.dataKey.dataKeyType == cn.edu.cup.dictionary.DataKeyType.dataKeyRef}">
                             <td>
-                                <!--g:textField name="subDataItems[${i}].dataValue" id="dataValue_${i}"/-->
-                                <g:select name="subDataItems[${i}].dataValue"
-                                          from="${cn.edu.cup.dictionary.dataItem.findAllByDataKey(cn.edu.cup.dictionary.dataKey.get(Integer.parseInt(subItem.dataKey.appendParameter)))}"
-                                          optionKey="id"
-                                          noSelection="${['null': 'Select One...']}"/>
+                                <g:if test="${!subItem.dataKey.appendParameter}">
+                                    <g:textField name="subDataItems[${i}].dataValue" id="dataValue_${i}"/>
+                                </g:if>
+                                <g:else>
+                                    <g:select name="subDataItems[${i}].dataValue"
+                                              from="${cn.edu.cup.dictionary.DataItem.findAllByDataKey(cn.edu.cup.dictionary.DataKey.get(Integer.parseInt(subItem.dataKey.appendParameter)))}"
+                                              optionKey="id"
+                                              noSelection="${['null': 'Select One...']}"/>
+                                </g:else>
                             </td>
                             <td>
+                                <h1>附加信息：${subItem.dataKey.appendParameter}</h1>
                             </td>
                         </g:if>
                     </tr>
@@ -136,23 +142,5 @@
     </g:uploadForm>
 <!--/g:form-->
 </div>
-<g:javascript>
-    $("input.datePicker").datepicker({
-        showButtonPanel: true,
-        dateFormat: "yy-mm-dd",
-        defaultDate: 0
-    });
-
-    $("input.dateTimePicker").datetimepicker({
-        format: 'Y-m-d H:i',
-        defaultDate: new Date()
-    });
-
-    //$("input.dateTimePicker").datetimepicker({
-    //    showButtonPanel: true,
-    //    todayBtn: true,
-    //    dateFormat: "yyyy-mm-dd hh-ii"
-    //});
-</g:javascript>
 </body>
 </html>

@@ -184,10 +184,6 @@ class Operation4DataController {
         dataItem.subDataItems.eachWithIndex { DataItem entry, int i ->
             switch (entry.dataKey.dataKeyType) {
                 case DataKeyType.dataKeyEnum:
-                    def list = entry.dataKey?.enumItems()
-                    List tmp = getQuotationList(list)
-                    aux.i = tmp
-                    println("Enum ${i} ${tmp}")
                     break;
                 case DataKeyType.dataKeyRef:
                     def refDataKeyId = 0
@@ -211,9 +207,20 @@ class Operation4DataController {
                     break
             }
         }
-        //def viewString = builder.bind {
-        //'?xml'(version:"1.0", encoding:"UTF-8")
         builder.setDoubleQuotes(true)
+        builder.html {
+            head {
+                meta(name: "layout", content: "main")
+            }
+            body {
+                generateDivContext(builder, dataKey, dataItem, aux)
+            }
+        }
+
+        return viewString
+    }
+
+    private String generateDivContext(MarkupBuilder builder, DataKey dataKey, dataItem, aux) {
         builder.div(id: "create-dataItem", class: "content scaffold-create", role: "main") {
             h1("静态生成的模板")
             builder.form(action: "operation4Data/saveDataItem", method: "post") {
@@ -249,7 +256,7 @@ class Operation4DataController {
                                         break;
                                     case DataKeyType.dataKeyDate:
                                         td {
-                                            input(type: "text", name: "subDataItems[${i}].dataValue", id: "dataValue_${i}", value: "${new java.util.Date()}", class: "datePicker")
+                                            input(type: "text", name: "subDataItems[${i}].dataValue", id: "dataValue_${i}", value: "${new Date()}", class: "datePicker")
                                         }
                                         td {}
                                         break
@@ -260,10 +267,8 @@ class Operation4DataController {
                                         break;
                                     case DataKeyType.dataKeyEnum:
                                         td {
-                                            //"g:select"(name: "subDataItems[${i}].dataValue", from: "${aux.i}", id: "dataValue_${i}")
-                                            //builder.select(name: "subDataItems[${i}].dataValue", from: "${aux.i}", id: "dataValue_${i}")
                                             builder.select(name: "subDataItems[${i}].dataValue", id: "dataValue_${i}") {
-                                                entry.dataKey.enumItems().each { e->
+                                                entry.dataKey.enumItems().each { e ->
                                                     option(value: "${e}", "${e}")
                                                 }
                                             }
@@ -284,7 +289,7 @@ class Operation4DataController {
                                     case DataKeyType.dataKeyRef:
                                         td {
                                             builder.select(name: "subDataItems[${i}].dataValue", id: "dataValue_${i}") {
-                                                aux.i.each { e->
+                                                aux.i.each { e ->
                                                     option(value: "${e}", "${e}")
                                                 }
                                             }
@@ -301,8 +306,6 @@ class Operation4DataController {
                 }
             }
         }
-        //}
-        return viewString
     }
 
     private List getQuotationList(list) {
