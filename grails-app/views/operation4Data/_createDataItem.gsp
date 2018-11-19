@@ -107,10 +107,10 @@
                                 <g:textField name="subDataItems[${i}].dataValue" id="file_${i}"/>
                             </td>
                             <td>
-                                <g:hiddenField name="uploadFilePath" value="${subItem.dataKey.appendParameter}"/>
-                                <g:hiddenField name="uploadFileDataKeyId" value="${subItem.dataKey.id}"/>
-                                <g:hiddenField name="uploadFileIndex" value="${i}"/>
-                                <input type="file" name="uploadFile" id="input_${i}"
+                                <g:hiddenField name="uploadedFilePath" value="${subItem.dataKey.appendParameter}"/>
+                                <g:hiddenField name="uploadedFileDataKeyId" value="${subItem.dataKey.id}"/>
+                                <g:hiddenField name="uploadedFileIndex" value="${i}"/>
+                                <input type="file" name="uploadedFile" id="input_${i}"
                                        onchange="updateUploadFileName(${i})"/>
                             </td>
                         </g:if>

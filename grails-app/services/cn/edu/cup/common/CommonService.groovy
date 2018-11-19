@@ -42,9 +42,9 @@ class CommonService {
     * 上传文件
     * */
     File upload(params) {
-        //println("service: ${params}")
-        //println("service: ${params.uploadedFile}")
-        //println("service: ${params.uploadedFile.originalFilename}")
+        println("service: ${params}")
+        println("service: ${params.uploadedFile}")
+        println("service: ${params.uploadedFile.originalFilename}")
         if (params.uploadedFile && params.destDir) {
             def uploadedFile = params.uploadedFile
             def destDir = params.destDir

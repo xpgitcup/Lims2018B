@@ -20,6 +20,7 @@ class Operation4DataController {
     def dataKeyService
     def dataItemService
     def treeViewService
+    def commonService
 
     //==================================================================================================================
     // 有关DataItem的处理
@@ -36,8 +37,31 @@ class Operation4DataController {
 
         try {
             dataItemService.save(dataItem)
+            //处理文件上传
+            def destDir = servletContext.getRealPath("/") + "uploads"
+            def uploadedFileNames = params.uploadedFile
+            def uploadedFileIndex = params.uploadedFileIndex
+            def uploadedFileDataKeyId = params.uploadedFileDataKeyId
+            def uploadedFilePath = params.uploadedFilePath
+            if (uploadedFileNames.getClass().array) {
+                println("不止一个文件...")
+                uploadedFileNames.eachWithIndex { e, i ->
+                    //def k = uploadFileIndex[i]
+                    params.destDir = "${destDir}/${uploadedFileDataKeyId[i]}/${uploadedFilePath[i]}"
+                    params.uploadedFile = e
+                    println(destDir)
+                    def sf = commonService.upload(params)
+                    println("上传${sf}成功...")
+                }
+            } else {
+                println("不是数组，只有一个文件...")
+                params.destDir = "${destDir}/${uploadedFileDataKeyId}/${uploadedFilePath}"
+                println(destDir)
+                def sf = commonService.upload(params)
+                println("上传${sf}成功...")
+            }
         } catch (ValidationException e) {
-            respond dataItem.errors, view: 'create'
+            respond dataItem.errors, view: 'createDataItem'
             return
         }
 
@@ -223,7 +247,7 @@ class Operation4DataController {
     private String generateDivContext(MarkupBuilder builder, DataKey dataKey, dataItem, aux) {
         builder.div(id: "create-dataItem", class: "content scaffold-create", role: "main") {
             h1("静态生成的模板")
-            builder.form(action: "operation4Data/saveDataItem", method: "post") {
+            builder.form(action: "operation4Data/saveDataItem", method: "post", enctype:"multipart/form-data") {
                 fieldset(class: "form") {
                     // 主关键字描述
                     table {
@@ -282,10 +306,10 @@ class Operation4DataController {
                                             input(type: "text", name: "subDataItems[${i}].dataValue", id: "file_${i}")
                                         }
                                         td {
-                                            input(type: "hidden", name: "uploadFilePath", value: "${entry.dataKey.appendParameter}")
-                                            input(type: "hidden", name: "uploadFileDataKeyId", value: "${entry.dataKey.id}")
-                                            input(type: "hidden", name: "uploadFileIndex", value: "${i}")
-                                            input(type: "file", name: "uploadFile", id: "input_${i}", onchange: "updateUploadFileName(${i})")
+                                            input(type: "hidden", name: "uploadedFilePath", value: "${entry.dataKey.appendParameter}")
+                                            input(type: "hidden", name: "uploadedFileDataKeyId", value: "${entry.dataKey.id}")
+                                            input(type: "hidden", name: "uploadedFileIndex", value: "${i}")
+                                            input(type: "file", name: "uploadedFile", id: "input_${i}", onchange: "updateUploadFileName(${i})")
                                         }
                                         break;
                                     case DataKeyType.dataKeyRef:
