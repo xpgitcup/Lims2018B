@@ -290,7 +290,7 @@ class InitService {
     def fillSamples() {
         println("填充测试数据......")
         //用户
-        fillSampleUsers()
+        //fillSampleUsers()
         //属性
         fileSampleAttributes()
         //菜单
