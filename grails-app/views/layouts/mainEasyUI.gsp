@@ -34,7 +34,7 @@
     <asset:javascript src="jquery-2.2.0.min.js"/>
 
     <!--jquery ui-->
-    <asset:javascript src="jquery-ui/jquery-ui.min.js.js"/>
+    <asset:javascript src="jquery-ui/jquery-ui.min.js"/>
     <asset:stylesheet src="jquery-ui/jquery-ui.min.css"/>
 
     <!--jquery datetimepicker-->
@@ -45,6 +45,7 @@
 
     <asset:javascript src="bootstrap.js"/>
     <asset:javascript src="bootstrap-treeview/bootstrap-treeview.min.js"/>
+
     <asset:javascript src="jquery/jquery.cookie.js"/>
 
     <!--bootstrap datetimepicker-->

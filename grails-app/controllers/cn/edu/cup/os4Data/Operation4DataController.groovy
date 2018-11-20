@@ -37,28 +37,30 @@ class Operation4DataController {
 
         try {
             dataItemService.save(dataItem)
-            //处理文件上传
-            def destDir = servletContext.getRealPath("/") + "uploads"
-            def uploadedFileNames = params.uploadedFile
-            def uploadedFileIndex = params.uploadedFileIndex
-            def uploadedFileDataKeyId = params.uploadedFileDataKeyId
-            def uploadedFilePath = params.uploadedFilePath
-            if (uploadedFileNames.getClass().array) {
-                println("不止一个文件...")
-                uploadedFileNames.eachWithIndex { e, i ->
-                    //def k = uploadFileIndex[i]
-                    params.destDir = "${destDir}/${uploadedFileDataKeyId[i]}/${uploadedFilePath[i]}"
-                    params.uploadedFile = e
+            if (params.uploadedFile) {
+                //处理文件上传
+                def destDir = servletContext.getRealPath("/") + "uploads" + "/${dataItem.dataKey.id}"
+                def uploadedFileNames = params.uploadedFile
+                def uploadedFileIndex = params.uploadedFileIndex
+                def uploadedFileDataKeyId = params.uploadedFileDataKeyId
+                def uploadedFilePath = params.uploadedFilePath
+                if (uploadedFileNames.getClass().array) {
+                    println("不止一个文件...")
+                    uploadedFileNames.eachWithIndex { e, i ->
+                        //def k = uploadFileIndex[i]
+                        params.destDir = "${destDir}/${uploadedFileDataKeyId[i]}/${uploadedFilePath[i]}"
+                        params.uploadedFile = e
+                        println(destDir)
+                        def sf = commonService.upload(params)
+                        println("上传${sf}成功...")
+                    }
+                } else {
+                    println("不是数组，只有一个文件...")
+                    params.destDir = "${destDir}/${uploadedFileDataKeyId}/${uploadedFilePath}"
                     println(destDir)
                     def sf = commonService.upload(params)
                     println("上传${sf}成功...")
                 }
-            } else {
-                println("不是数组，只有一个文件...")
-                params.destDir = "${destDir}/${uploadedFileDataKeyId}/${uploadedFilePath}"
-                println(destDir)
-                def sf = commonService.upload(params)
-                println("上传${sf}成功...")
             }
         } catch (ValidationException e) {
             respond dataItem.errors, view: 'createDataItem'

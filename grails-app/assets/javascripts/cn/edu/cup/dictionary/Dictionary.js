@@ -59,7 +59,25 @@ function switchTabs(isTree) {
 }
 
 //======================================================================================================================
-// 数据模型基本处理函数
+// 通用的一些处理函数
+
+/*
+* 处理日期+时间的输入
+* */
+function processDateTime() {
+    $("input.datePicker").datepicker({
+        showButtonPanel: true,
+        dateFormat: "yy-mm-dd",
+        defaultDate: 0
+    });
+
+    $("input.dateTimePicker").datetimepicker({
+        format: 'Y-m-d H:i',
+        defaultDate: new Date()
+    });
+
+    console.info("处理日期时间......")
+}
 
 /*
 * 处理文件上传
@@ -79,6 +97,10 @@ function updateUploadFileName(id) {
     aafile.value = aainput.files[0].name;
     console.info(aainput.value);
 }
+
+//======================================================================================================================
+// 数据模型基本处理函数
+
 
 //======================================================================================================================
 // 数据项处理函数
