@@ -73,6 +73,8 @@ class InitService {
 
     /*
     * 初始化系统菜单
+    * 定义一个文件格式--jsong格式
+    * 先输出一个输出的，然后定义导入的
     * */
 
     def initSystemMenuItems(domains) {
