@@ -5,19 +5,50 @@ import cn.edu.cup.system.SystemMenu
 import cn.edu.cup.system.SystemMenuController
 import com.fasterxml.jackson.databind.ObjectMapper
 import grails.converters.JSON
-import grails.rest.render.json.JsonRenderer
 import groovy.json.JsonBuilder
 import groovy.json.JsonOutput
+
+//import com.alibaba.fastjson.JSON
 
 class Operation4SystemMenuController extends SystemMenuController {
 
     def treeViewService
+    def commonService
 
     /*
     * 导出文件json
     * 如果是空，导出整个数据表
     * 如果不是，导出这一枝
     * */
+
+    def export2JsonFile(SystemMenu systemMenu) {
+        def webRootDir = servletContext.getRealPath("/")
+        def fileName = "${webRootDir}systemConfig/systemMenu.json"
+
+        def systemMenuList = []
+        if (systemMenu) {
+            systemMenuList.add(systemMenu)
+        } else {
+            systemMenuList.addAll(SystemMenu.list())
+        }
+        println(systemMenuList)
+
+        def builder = new JsonBuilder()
+        builder {
+            systemMenuList.each { e ->
+                [
+                        "menuContext": e.menuContext,
+                        "menuAction" : e.menuAction
+                ]
+            }
+        }
+
+        def printer = new File(fileName).newPrintWriter('utf-8')    //写入文件
+        printer.println(builder.toPrettyString())
+        printer.close()
+
+        redirect(action: 'index')
+    }
 
     def exportToJsonFile(SystemMenu systemMenu) {
         def webRootDir = servletContext.getRealPath("/")
@@ -27,23 +58,29 @@ class Operation4SystemMenuController extends SystemMenuController {
         if (systemMenu) {
             addMenuItemToList(systemMenu, systemMenuList)
         } else {
-            SystemMenu.list().each { e-> addMenuItemToList(e, systemMenuList)}
+            SystemMenu.list().each { e -> addMenuItemToList(e, systemMenuList) }
         }
         println(systemMenuList)
+
+        def menuList = commonService.getQuotationList(systemMenuList)
+        println("原始：")
+        println(menuList)
 
         def builder = new JsonBuilder(systemMenuList)
         println("JsonBuilder:")
         println(builder.toString())     //这个编码有问题
-        def dc = URLDecoder.decode(builder.toString(), "UTF-8")
-        println("JsonBuilder:")
-        println(dc)
 
         def json = JsonOutput.toJson(systemMenuList)
         println("JsonOutput:")
         println(json)
 
+        def fjson = com.alibaba.fastjson.JSON.toJSONString(systemMenuList)
+        println("FastJson:")
+        println(fjson)
+        //def ffjson = JsonOutput.prettyPrint(fjson)  //汉字会变化
+
         def printer = new File(fileName).newPrintWriter('utf-8')    //写入文件
-        printer.println(json)
+        printer.println(fjson)
         printer.close()
 
         redirect(action: 'index')
@@ -54,14 +91,14 @@ class Operation4SystemMenuController extends SystemMenuController {
         item.menuContext = systemMenu.menuContext
         item.menuAction = systemMenu.menuAction
         item.menuDescription = systemMenu.menuDescription
-        item.upMenuItem = "${systemMenu.upMenuItem?.menuContext}"
+        item.upMenuItem = systemMenu.upMenuItem?.menuContext
         item.roleAttribute = systemMenu.roleAttribute
         item.layout = systemMenu.layout
         item.menuOrder = systemMenu.menuOrder
         if (systemMenu.menuItems) {
             def subList = []
             item.menuItems = subList
-            systemMenu.menuItems.each { e->
+            systemMenu.menuItems.each { e ->
                 addMenuItemToList(e, subList)
             }
         }

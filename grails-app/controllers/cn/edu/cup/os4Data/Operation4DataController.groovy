@@ -339,14 +339,6 @@ class Operation4DataController {
         }
     }
 
-    private List getQuotationList(list) {
-        def tmp = []
-        list.each { e ->
-            tmp.add("\'${e}\'")
-        }
-        tmp
-    }
-
     /*
     * 下载数据导入模板
     **/

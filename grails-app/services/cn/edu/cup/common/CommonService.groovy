@@ -6,6 +6,14 @@ import org.springframework.web.context.request.RequestContextHolder
 
 class CommonService {
 
+    List getQuotationList(list) {
+        def tmp = []
+        list.each { e ->
+            tmp.add("\'${e}\'")
+        }
+        tmp
+    }
+
     /*
     * 数据导出服务：
     * 将对象导出到Map
