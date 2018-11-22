@@ -27,9 +27,9 @@ class InitService {
 
     //加载数据库初始化脚本
     def loadScripts(String dir) {
-        def File sf = new File(dir)
-        println "load scripts ${dir}"
+        File sf = new File(dir)
         if (sf.exists()) {
+            println "load scripts ${dir}"
             if (sf.isDirectory()) {
                 sf.eachFile { f ->
                     if (f.isFile()) {
@@ -37,6 +37,7 @@ class InitService {
                     }
                 }
             } else {
+                println("执行${sf}...")
                 executeScript(sf)
             }
         }

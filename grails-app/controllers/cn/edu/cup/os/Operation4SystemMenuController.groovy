@@ -3,12 +3,7 @@ package cn.edu.cup.os
 import cn.edu.cup.system.JsFrame
 import cn.edu.cup.system.SystemMenu
 import cn.edu.cup.system.SystemMenuController
-import com.fasterxml.jackson.databind.ObjectMapper
 import grails.converters.JSON
-import groovy.json.JsonBuilder
-import groovy.json.JsonOutput
-
-//import com.alibaba.fastjson.JSON
 
 class Operation4SystemMenuController extends SystemMenuController {
 
@@ -36,7 +31,6 @@ class Operation4SystemMenuController extends SystemMenuController {
         def fjson = com.alibaba.fastjson.JSON.toJSONString(systemMenuList)
         println("FastJson:")
         println(fjson)
-        //def ffjson = JsonOutput.prettyPrint(fjson)  //汉字会变化
 
         def printer = new File(fileName).newPrintWriter('utf-8')    //写入文件
         printer.println(fjson)

@@ -28,7 +28,7 @@ class BootStrap {
     def configureForDevelopment(servletContext) {
         println "这是开发环境..."
         def webRootDir = servletContext.getRealPath("/")
-        def configFileName = "${webRootDir}config.xml"
+        def configFileName = "${webRootDir}config.ini"
         def configFile = new File(configFileName)
         def config = new Properties()
         if (configFile.exists()) {
@@ -36,14 +36,21 @@ class BootStrap {
             def inf = new FileInputStream(configFile)
             def reader = new InputStreamReader(inf, "UTF-8")
             config.load(reader)
-            def scripts = config.getProperty("scripts").split(",")
-            scripts.each { e ->
-                initService.loadScripts(e)
+            def scriptsTemp = config.getProperty("scripts")
+            println(scriptsTemp)
+            if (scriptsTemp) {
+                println("脚本文件：" + scriptsTemp)
+                def scripts = scriptsTemp.split(",")
+                scripts.each { e ->
+                    initService.loadScripts("${webRootDir}${e}")
+                }
             }
         } else {
             def of = new FileOutputStream(configFile, false)
-            config.setProperty("scripts", "文件1,wfjm")
-            config.storeToXML(of, "系统配置文件", "utf-8")
+            def ow = new OutputStreamWriter(of, "utf-8")
+            config.setProperty("scripts", "文件1,文件2")
+            //config.storeToXML(of, "系统配置文件", "utf-8")
+            config.store(ow, "系统配置文件")
             println("创建配置文件.")
         }
     }
