@@ -21,58 +21,17 @@ class Operation4SystemMenuController extends SystemMenuController {
     * 如果不是，导出这一枝
     * */
 
-    def export2JsonFile(SystemMenu systemMenu) {
-        def webRootDir = servletContext.getRealPath("/")
-        def fileName = "${webRootDir}systemConfig/systemMenu.json"
-
-        def systemMenuList = []
-        if (systemMenu) {
-            systemMenuList.add(systemMenu)
-        } else {
-            systemMenuList.addAll(SystemMenu.list())
-        }
-        println(systemMenuList)
-
-        def builder = new JsonBuilder()
-        builder {
-            systemMenuList.each { e ->
-                [
-                        "menuContext": e.menuContext,
-                        "menuAction" : e.menuAction
-                ]
-            }
-        }
-
-        def printer = new File(fileName).newPrintWriter('utf-8')    //写入文件
-        printer.println(builder.toPrettyString())
-        printer.close()
-
-        redirect(action: 'index')
-    }
-
     def exportToJsonFile(SystemMenu systemMenu) {
-        def webRootDir = servletContext.getRealPath("/")
-        def fileName = "${webRootDir}systemConfig/systemMenu.json"
+
+        def fileName = commonService.menuConfigFileName()
 
         def systemMenuList = []
         if (systemMenu) {
             addMenuItemToList(systemMenu, systemMenuList)
         } else {
-            SystemMenu.list().each { e -> addMenuItemToList(e, systemMenuList) }
+            SystemMenu.findAllByUpMenuItemIsNull().each { e -> addMenuItemToList(e, systemMenuList) }
         }
         println(systemMenuList)
-
-        def menuList = commonService.getQuotationList(systemMenuList)
-        println("原始：")
-        println(menuList)
-
-        def builder = new JsonBuilder(systemMenuList)
-        println("JsonBuilder:")
-        println(builder.toString())     //这个编码有问题
-
-        def json = JsonOutput.toJson(systemMenuList)
-        println("JsonOutput:")
-        println(json)
 
         def fjson = com.alibaba.fastjson.JSON.toJSONString(systemMenuList)
         println("FastJson:")
@@ -88,21 +47,23 @@ class Operation4SystemMenuController extends SystemMenuController {
 
     private void addMenuItemToList(SystemMenu systemMenu, List systemMenuList) {
         def item = [:]
-        item.menuContext = systemMenu.menuContext
-        item.menuAction = systemMenu.menuAction
-        item.menuDescription = systemMenu.menuDescription
-        item.upMenuItem = systemMenu.upMenuItem?.menuContext
-        item.roleAttribute = systemMenu.roleAttribute
-        item.layout = systemMenu.layout
-        item.menuOrder = systemMenu.menuOrder
-        if (systemMenu.menuItems) {
-            def subList = []
-            item.menuItems = subList
-            systemMenu.menuItems.each { e ->
-                addMenuItemToList(e, subList)
+        if (systemMenu.menuContext != "底层管理") {
+            item.menuContext = systemMenu.menuContext
+            item.menuAction = systemMenu.menuAction
+            item.menuDescription = systemMenu.menuDescription
+            item.upMenuItem = systemMenu.upMenuItem?.menuContext
+            item.roleAttribute = systemMenu.roleAttribute
+            item.layout = systemMenu.layout
+            item.menuOrder = systemMenu.menuOrder
+            if (systemMenu.menuItems) {
+                def subList = []
+                item.menuItems = subList
+                systemMenu.menuItems.each { e ->
+                    addMenuItemToList(e, subList)
+                }
             }
+            systemMenuList.add(item)
         }
-        systemMenuList.add(item)
     }
 
     /*

@@ -3,7 +3,6 @@ package cn.edu.cup.init
 import cn.edu.cup.dictionary.DataItem
 import cn.edu.cup.dictionary.DataKey
 import cn.edu.cup.dictionary.DataKeyType
-import com.alibaba.fastjson.JSON;
 import cn.edu.cup.dictionary.DataDictionary
 import cn.edu.cup.system.SystemAttribute
 import cn.edu.cup.system.SystemCarousel
@@ -22,21 +21,23 @@ class InitService {
     def dataSource
     def dataDictionaryService
     def systemMenuService
-    def commonService
     def dataKeyService
     def dataItemService
+    def commonService
 
     //加载数据库初始化脚本
     def loadScripts(String dir) {
         def File sf = new File(dir)
         println "load scripts ${dir}"
         if (sf.exists()) {
-            if (sf) {
+            if (sf.isDirectory()) {
                 sf.eachFile { f ->
                     if (f.isFile()) {
                         executeScript(f)
                     }
                 }
+            } else {
+                executeScript(sf)
             }
         }
     }
@@ -72,192 +73,85 @@ class InitService {
     }
 
     /*
+    * 从json文件中导入菜单
+    * */
+
+    def importFromJsonFile(fileName) {
+        def jsonFile = new File(fileName)
+        if (jsonFile.exists()) {
+            def json = jsonFile.text
+            def menuItems = com.alibaba.fastjson.JSON.parse(json)
+            println(menuItems)
+            menuItems.each { e ->
+                def m0 = new SystemMenu(
+                        menuContext: e.menuContext,
+                        menuAction: e.menuAction,
+                        menuDescription: e.menuDescription,
+                        upMenuItem: null,
+                        roleAttribute: e.roleAttribute,
+                        menuOrder: e.menuOrder
+                )
+                systemMenuService.save(m0)
+                if (e.menuItems) {
+                    e.menuItems.each { ee ->
+                        def mm0 = new SystemMenu(
+                                menuContext: ee.menuContext,
+                                menuAction: ee.menuAction,
+                                menuDescription: ee.menuDescription,
+                                upMenuItem: m0,
+                                roleAttribute: ee.roleAttribute,
+                                menuOrder: ee.menuOrder
+                        )
+                        systemMenuService.save(mm0)
+                    }
+                }
+            }
+        }
+    }
+
+    /*
     * 初始化系统菜单
     * 定义一个文件格式--jsong格式
     * 先输出一个输出的，然后定义导入的
     * */
 
     def initSystemMenuItems(domains) {
+        // 首先从配置文件中导入
+        def fileName = commonService.menuConfigFileName()
+        //--------------------------------------------------------------------------------------------------------------
         if (SystemMenu.count() < 1) {
-            def m0 = new SystemMenu(
-                    menuContext: "底层管理",
-                    menuAction: "#",
-                    menuDescription: "对系统的菜单结构进行底层维护",
-                    upMenuItem: null,
-                    roleAttribute: "底层管理",
-                    menuOrder: 100
-            )
-            //m0.save(true)
-            systemMenuService.save(m0)
-            //----------------------------------------------------------------------------------------------------------
-            //创建正对各个域类控制器的菜单
-            domains.sort()
-            domains.each() { e ->
-                def m01 = new SystemMenu(
-                        menuContext: "${e.name}",
-                        menuAction: "${e.name}/index",
-                        menuDescription: "对${e.name}属性进行维护",
-                        upMenuItem: m0,
-                        roleAttribute: "底层管理",
-                        menuOrder: 0
-                )
-                //m01.save(true)
-                systemMenuService.save(m01)
-            }
-            def m011 = new SystemMenu(
-                    menuContext: "系统状态",
-                    menuAction: "Operation4SystemStatus",
-                    menuDescription: "显示当前的系统状态",
+            importFromJsonFile(fileName)
+        }
+        setupDomainMenuItems(domains)
+    }
+
+    private SystemMenu setupDomainMenuItems(domains) {
+        def m0 = new SystemMenu(
+                menuContext: "底层管理",
+                menuAction: "#",
+                menuDescription: "对系统的菜单结构进行底层维护",
+                upMenuItem: null,
+                roleAttribute: "底层管理",
+                menuOrder: 100
+        )
+        //m0.save(true)
+        systemMenuService.save(m0)
+        //----------------------------------------------------------------------------------------------------------
+        //创建正对各个域类控制器的菜单
+        domains.sort()
+        domains.each() { e ->
+            def m01 = new SystemMenu(
+                    menuContext: "${e.name}",
+                    menuAction: "${e.name}/index",
+                    menuDescription: "对${e.name}属性进行维护",
                     upMenuItem: m0,
                     roleAttribute: "底层管理",
                     menuOrder: 0
             )
-            //m011.save(true)
-            systemMenuService.save(m011)
-            //----------------------------------------------------------------------------------------------------------
-            def m1 = new SystemMenu(
-                    menuContext: "系统维护",
-                    menuAction: "#",
-                    menuDescription: "对系统的菜单结构进行用户友好的维护",
-                    upMenuItem: null,
-                    roleAttribute: "系统维护",
-                    menuOrder: 0
-            )
-            //m1.save(true)
-            systemMenuService.save(m1)
-            //----------------------------------------------------------------------------------------------------------
-            def m11 = new SystemMenu(
-                    menuContext: "属性维护",
-                    menuAction: "Operation4SystemAttribute/index",
-                    menuDescription: "对系统的用户属性进行用户友好的维护",
-                    upMenuItem: m1,
-                    menuOrder: 0
-            )
-            //m11.save(true)
-            systemMenuService.save(m11)
-            //----------------------------------------------------------------------------------------------------------
-            def m12 = new SystemMenu(
-                    menuContext: "用户维护",
-                    menuAction: "Operation4SystemUser/index",
-                    menuDescription: "对系统的用户进行用户友好的维护",
-                    upMenuItem: m1,
-                    menuOrder: 0
-            )
-            //m12.save(true)
-            systemMenuService.save(m12)
-            //----------------------------------------------------------------------------------------------------------
-            def m13 = new SystemMenu(
-                    menuContext: "菜单维护",
-                    menuAction: "Operation4SystemMenu/index",
-                    menuDescription: "对系统的菜单用户进行用户友好的维护",
-                    upMenuItem: m1,
-                    menuOrder: 0
-            )
-            //m13.save(true)
-            systemMenuService.save(m13)
-            //----------------------------------------------------------------------------------------------------------
-            def m14 = new SystemMenu(
-                    menuContext: "日志维护",
-                    menuAction: "Operation4SystemLog/index",
-                    menuDescription: "对系统的日志进行用户友好的维护",
-                    upMenuItem: m1,
-                    menuOrder: 0
-            )
-            //m14.save(true)
-            systemMenuService.save(m14)
-            //----------------------------------------------------------------------------------------------------------
-            def m2 = new SystemMenu(
-                    menuContext: "公共服务",
-                    menuAction: "#",
-                    menuDescription: "对所有用户开放的功能",
-                    upMenuItem: null,
-                    roleAttribute: "公共服务",
-                    menuOrder: 0
-            )
-            //m2.save(true)
-            systemMenuService.save(m2)
-            //----------------------------------------------------------------------------------------------------------
-            def m21 = new SystemMenu(
-                    menuContext: "社区沟通",
-                    menuAction: "Operation4SystemChat/index",
-                    menuDescription: "与系统中的用户对话",
-                    upMenuItem: m2,
-                    menuOrder: 0
-            )
-            //m21.save(true)
-            systemMenuService.save(m21)
-            //----------------------------------------------------------------------------------------------------------
-            def m3 = new SystemMenu(
-                    menuContext: "基础数据",
-                    menuAction: "#",
-                    menuDescription: "维护数据字典+物理单位",
-                    upMenuItem: null,
-                    roleAttribute: "系统维护",
-                    menuOrder: 0
-            )
-            //m3.save(true)
-            systemMenuService.save(m3)
-            //----------------------------------------------------------------------------------------------------------
-            def m33 = new SystemMenu(
-                    menuContext: "单位维护",
-                    menuAction: "Operation4Physical/index",
-                    menuDescription: "物理单位维护",
-                    upMenuItem: m3,
-                    menuOrder: 0
-            )
-            m33.save(true)
-            systemMenuService.save(m0)
-            //----------------------------------------------------------------------------------------------------------
-            def m34 = new SystemMenu(
-                    menuContext: "用户库维护",
-                    menuAction: "operation4UserLibrary/index",
-                    menuDescription: "维护用户代码库",
-                    upMenuItem: m3,
-                    menuOrder: 0
-            )
-            m34.save(true)
-            systemMenuService.save(m0)
-            //----------------------------------------------------------------------------------------------------------
-            def m35 = new SystemMenu(
-                    menuContext: "数据字典A维护",
-                    menuAction: "operation4Data/index",
-                    menuDescription: "维护数据字典（新）",
-                    upMenuItem: m3,
-                    menuOrder: 0
-            )
-            m35.save(true)
-            systemMenuService.save(m0)
-            //----------------------------------------------------------------------------------------------------------
-            def m36 = new SystemMenu(
-                    menuContext: "数据A维护",
-                    menuAction: "operation4DataA/index",
-                    menuDescription: "维护数据字典（新）",
-                    upMenuItem: m3,
-                    menuOrder: 0
-            )
-            m36.save(true)
-            systemMenuService.save(m0)
-            //----------------------------------------------------------------------------------------------------------
-            //----------------------------------------------------------------------------------------------------------
-            def m4 = new SystemMenu(
-                    menuContext: "管道模拟",
-                    menuAction: "#",
-                    menuDescription: "管道模拟",
-                    upMenuItem: null,
-                    roleAttribute: "系统维护",
-                    menuOrder: 0
-            )
-            m4.save(true)
-            //----------------------------------------------------------------------------------------------------------
-            def m41 = new SystemMenu(
-                    menuContext: "管道",
-                    menuAction: "Operation4PipeSimulation/index",
-                    menuDescription: "管道数据维护",
-                    upMenuItem: m4,
-                    menuOrder: 0
-            )
-            m41.save(true)
+            //m01.save(true)
+            systemMenuService.save(m01)
         }
+        m0
     }
 
     /**
@@ -293,14 +187,14 @@ class InitService {
         println("填充测试数据......")
         //用户
         //fillSampleUsers()
+        //菜单 -- 应该在前面
+        fillSampleMenus()
         //属性
         fileSampleAttributes()
-        //菜单
-        fillSampleMenus()
         //对话
         fillSampleChat()
         //数据字典
-        fillSampleDataKey()
+        //fillSampleDataKey()
         //程序标题
         fillSampleTitle()
         //用户类库
@@ -448,14 +342,8 @@ class InitService {
             println("测试性的属性...")
             def attributeA = new SystemAttribute(name: "系统操作权限")
             attributeA.save(true)
-            for (int i = 0; i < 10; i++) {
-                def aa = new SystemAttribute(name: "权限${i}", upAttribute: attributeA)
-                aa.save(true)
-            }
-            def attributeB = new SystemAttribute(name: "读取权限")
-            attributeB.save(true)
-            for (int i = 0; i < 10; i++) {
-                def aa = new SystemAttribute(name: "读取权限${i}", upAttribute: attributeB)
+            SystemMenu.findAllByUpMenuItemIsNull().each { e->
+                def aa = new SystemAttribute(name: e.menuContext, upAttribute: attributeA)
                 aa.save(true)
             }
         }

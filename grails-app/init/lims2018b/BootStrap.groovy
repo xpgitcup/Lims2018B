@@ -28,10 +28,23 @@ class BootStrap {
     def configureForDevelopment(servletContext) {
         println "这是开发环境..."
         def webRootDir = servletContext.getRealPath("/")
-        def scriptPaths = ["${webRootDir}scripts/system", "${webRootDir}scripts/physical"]
-        println "BootStrap ${webRootDir}"
-        scriptPaths.each { e ->
-            initService.loadScripts(e)
+        def configFileName = "${webRootDir}config.xml"
+        def configFile = new File(configFileName)
+        def config = new Properties()
+        if (configFile.exists()) {
+            println("读取配置文件.")
+            def inf = new FileInputStream(configFile)
+            def reader = new InputStreamReader(inf, "UTF-8")
+            config.load(reader)
+            def scripts = config.getProperty("scripts").split(",")
+            scripts.each { e ->
+                initService.loadScripts(e)
+            }
+        } else {
+            def of = new FileOutputStream(configFile, false)
+            config.setProperty("scripts", "文件1,wfjm")
+            config.storeToXML(of, "系统配置文件", "utf-8")
+            println("创建配置文件.")
         }
     }
 

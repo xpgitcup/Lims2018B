@@ -4,7 +4,11 @@ import grails.util.Environment
 import org.grails.web.util.WebUtils
 import org.springframework.web.context.request.RequestContextHolder
 
+import javax.servlet.ServletContext
+
 class CommonService {
+
+    def grailsApplication
 
     List getQuotationList(list) {
         def tmp = []
@@ -18,18 +22,19 @@ class CommonService {
     * 数据导出服务：
     * 将对象导出到Map
     * */
+
     def exportObjectList2DataTable(Object object) {
         def head = []
         def data = []
         if (object instanceof List) {
             println("${object} 是List类型。")
-            if (object.size()>0) {
-                object[0].properties.each { e->
+            if (object.size() > 0) {
+                object[0].properties.each { e ->
                     head.add(e.key)
                 }
-                object.each { e->
+                object.each { e ->
                     def row = []
-                    e.properties.each { ee->
+                    e.properties.each { ee ->
                         row.add(ee.value)
                     }
                     data.add(row)
@@ -37,18 +42,19 @@ class CommonService {
             }
         } else {
             println("${object}不是List")
-            object.properties.each {e->
+            object.properties.each { e ->
                 head.add(e.key)
                 data.add(e.value)
             }
         }
-        def model = [head:head, data: data]
+        def model = [head: head, data: data]
         return model
     }
 
     /*
     * 上传文件
     * */
+
     File upload(params) {
         println("service: ${params}")
         println("service: ${params.uploadedFile}")
@@ -70,6 +76,7 @@ class CommonService {
     /*
     * 下载文件
     * */
+
     def downLoadFile(params) {
         def hasError = []
         if (params.downLoadFileName) {
@@ -104,6 +111,17 @@ class CommonService {
         }
     }
 
+    /*
+    * 菜单配置文件
+    * */
+
+    def menuConfigFileName() {
+        def servletContext = getServletContext()
+        def webRootDir = servletContext.getRealPath("/")
+        def fileName = "${webRootDir}systemConfig/systemMenu.json"
+        return fileName
+    }
+
     //Getting the Request object
     def getRequest() {
         def webUtils = WebUtils.retrieveGrailsWebRequest()
@@ -115,11 +133,14 @@ class CommonService {
         def webUtils = WebUtils.retrieveGrailsWebRequest()
         webUtils.getCurrentResponse()
     }
+
     //Getting the ServletContext object
     def getServletContext() {
-        def webUtils = WebUtils.retrieveGrailsWebRequest()
-        webUtils.getServletContext()
+        //def webUtils = WebUtils.retrieveGrailsWebRequest()
+        //webUtils.getServletContext()
+        return grailsApplication.getMainContext().servletContext
     }
+
     //Getting the Session object
     def getSession() {
         RequestContextHolder.currentRequestAttributes().getSession()
@@ -141,7 +162,7 @@ class CommonService {
         def appName = getApplicationName()
         def kk = appRoot.lastIndexOf(appName)
         def webRoot
-        if (kk>-1) {
+        if (kk > -1) {
             webRoot = appRoot.substring(0, kk)
         } else {
             webRoot = appRoot
@@ -152,6 +173,7 @@ class CommonService {
     /*
     * 根据环境检查文件路径
     * */
+
     def checkFilePath4Enviroment(pathString) {
         def webRoot = getWebRootDir()
         def result
