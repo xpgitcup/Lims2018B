@@ -8,7 +8,6 @@ import cn.edu.cup.system.JsFrame
 import grails.converters.JSON
 import grails.validation.ValidationException
 import groovy.xml.MarkupBuilder
-import groovy.xml.StreamingMarkupBuilder
 
 import static org.springframework.http.HttpStatus.CREATED
 import static org.springframework.http.HttpStatus.NO_CONTENT
@@ -90,7 +89,7 @@ class Operation4DataController {
         def view = 'createDataItem'
         String responseText
         // 如果有生成的视图，就是用生成的静态视图
-        def dataKeyViewFileName = dataKeyViewFileName(dataKey)
+        def dataKeyViewFileName = dataKeyInputViewFileName(dataKey)
         def dataKeyViewFile = new File(dataKeyViewFileName)
         if (dataKeyViewFile.exists()) {
             def template = new groovy.text.StreamingTemplateEngine().createTemplate(dataKeyViewFile.text)
@@ -113,12 +112,29 @@ class Operation4DataController {
         }
     }
 
-    private def dataKeyViewFileName(DataKey dataKey) {
+    /*
+    * 模型列表模板文件名
+    * */
+
+    private def dataKeyListViewFileName(DataKey dataKey) {
         def nowPath = this.class.getResource("/").getPath()
-        //def actionName = this.getActionName()
+        def controllerName = "userViewTemplates"//this.controllerName
+        return "${nowPath}${controllerName}/${dataKey.id}/_dataKey_List_${dataKey.id}.gsp"
+    }
+
+    private def dataKeyListViewTemplateName(DataKey dataKey) {
+        def controllerName = "userViewTemplates"//this.controllerName
+        return "/${controllerName}/${dataKey.id}/dataKey_List_${dataKey.id}.gsp"
+    }
+
+    /*
+    * 模型输入模板文件名
+    * */
+
+    private def dataKeyInputViewFileName(DataKey dataKey) {
+        def nowPath = this.class.getResource("/").getPath()
         def controllerName = "userViewTemplates"//this.controllerName
         return "${nowPath}${controllerName}/${dataKey.id}/_dataKey_${dataKey.id}.gsp"
-        //return "${nowPath}${controllerName}/_dataKey_${dataKey.id}.gsp"
     }
 
     private DataItem getNewDataItem(DataKey dataKey) {
@@ -150,8 +166,21 @@ class Operation4DataController {
             dataItemList = DataItem.findAllByDataKey(dataKey)
         }
         println("查询结果：${dataKey} -- ${count}:  ${dataItemList}")
+        //--------------------------------------------------------------------------------------------------------------
+        def view = "listDataItem"
+        def listViewName = dataKeyListViewFileName(dataKey)
+        def dataKeyListViewFile = new File(listViewName)
+        if (dataKeyListViewFile.exists()) {
+            view = dataKeyListViewTemplateName(dataKey)
+        }
+        //--------------------------------------------------------------------------------------------------------------
+        // 如果用户指定，使用用户指定的
+        if (params.view) {
+            view = params.view
+        }
+
         if (request.xhr) {
-            render(template: 'listDataItem', model: [dataItemList: dataItemList])
+            render(template: view, model: [dataItemList: dataItemList])
         } else {
             respond dataItemList
         }
@@ -176,13 +205,37 @@ class Operation4DataController {
     // 有关DataKeyA的处理
 
     /*
+    * 生成列表模板
+    * */
+
+    def downloadListViewTemplate(DataKey dataKey) {
+        def fileName = dataKeyListViewFileName(dataKey)
+        def file = new File(fileName)
+        def dir = file.getParentFile()
+        if (!dir.exists()) {
+            if (dir.mkdir()) {
+                println("创建目录${dir}")
+            } else {
+                println("怎么出错了呢？${dir}")
+            }
+        }
+        printf("生成列表模板%s\n", [fileName])
+        def outString = createDataKeyListViewTemplate(dataKey)
+        def printer = new File(fileName).newPrintWriter('utf-8')    //写入文件
+        printer.println(outString.toString())
+        printer.close()
+
+        redirect(action: "index")
+    }
+
+    /*
     * 下载输入模板
     * 要手动创建main/webapp目录，这样dir = request.getRealPath("/")才能找到该目录
     * 创建文件的时候，
     * */
 
     def downloadViewTemplate(DataKey dataKey) {
-        def fileName = dataKeyViewFileName(dataKey)
+        def fileName = dataKeyInputViewFileName(dataKey)
         def file = new File(fileName)
         def dir = file.getParentFile()
         if (!dir.exists()) {
@@ -193,7 +246,7 @@ class Operation4DataController {
             }
         }
         printf("生成输入模板%s\n", [fileName])
-        def outString = createDataItemViewTemplate(dataKey)
+        def outString = createDataKeyInputViewTemplate(dataKey)
         def printer = new File(fileName).newPrintWriter('utf-8')    //写入文件
         printer.println(outString.toString())
         printer.close()
@@ -201,7 +254,35 @@ class Operation4DataController {
         redirect(action: "index")
     }
 
-    def createDataItemViewTemplate(DataKey dataKey) {
+    /*
+    * 生成针对数据模型的显示模板
+    * */
+
+    /*
+    * 生成针对数据模型的列表模板
+    * */
+
+    def createDataKeyListViewTemplate(DataKey dataKey) {
+        def viewString = new StringWriter()
+        def builder = new MarkupBuilder(viewString)
+        builder.setDoubleQuotes(true)
+        builder.html {
+            head {
+                builder.meta(name: "layout", content: "main")
+            }
+            body {
+                generateListDivContext(builder, dataKey)
+            }
+        }
+
+        return viewString
+    }
+
+    /*
+    * 生成针对数据模型的输入模板
+    * */
+
+    def createDataKeyInputViewTemplate(DataKey dataKey) {
         def dataItem = getNewDataItem(dataKey)
         //def builder = new StreamingMarkupBuilder()
         def viewString = new StringWriter()
@@ -239,17 +320,55 @@ class Operation4DataController {
                 builder.meta(name: "layout", content: "main")
             }
             body {
-                generateDivContext(builder, dataKey, dataItem, aux)
+                generateFormDivContext(builder, dataKey, dataItem, aux)
             }
         }
 
         return viewString
     }
 
-    private String generateDivContext(MarkupBuilder builder, DataKey dataKey, dataItem, aux) {
+    /*
+    * 生成列表模板
+    * */
+
+    private String generateListDivContext(MarkupBuilder builder, DataKey dataKey) {
+        builder.div(id: "list-dataItem", class: "content scaffold-list", role: "main") {
+            h1("${dataKey.dataTag}列表：")
+            //"f:table"(collection: "\${dataItemList}")
+            table {
+                "g:each"(in:"\${dataItemList}", status:"i", var:"item") {
+                    tr(class:"\${(i % 2) == 0 ? 'even' : 'odd'}") {
+                        td{
+                            table{
+                                tr{
+                                    td("\${item.id}")
+                                    td("\${item.dataKey.dataTag}")
+                                    td("\${item?.subDataItems?.size()}")
+                                }
+                                "g:each"(in:"\${item?.subDataItems}", status:"j", var:"e") {
+                                    tr{
+                                        td("\${e.id}")
+                                        td("\${e.data}")
+                                        td("\${e.id}")
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+
+    /*
+    * 生成输入模板
+    * */
+
+    private String generateFormDivContext(MarkupBuilder builder, DataKey dataKey, dataItem, aux) {
         builder.div(id: "create-dataItem", class: "content scaffold-create", role: "main") {
             h1("静态生成的模板")
-            builder.form(action: "operation4Data/saveDataItem", method: "post", enctype:"multipart/form-data") {
+            builder.form(action: "operation4Data/saveDataItem", method: "post", enctype: "multipart/form-data") {
                 fieldset(class: "form") {
                     // 主关键字描述
                     table {
@@ -322,7 +441,7 @@ class Operation4DataController {
                                                 }
                                             }
                                         }
-                                        td{
+                                        td {
                                             h1("附加信息：${entry.dataKey.appendParameter}")
                                         }
                                         break;
@@ -494,15 +613,25 @@ class Operation4DataController {
             dataKeyList = DataKey.findAllByDictionaryAndUpDataKeyIsNull(dataDictionary)
         }
         // 检查用户视图的存在性
+        def dataKeyListViewList = [:]
+        dataKeyList.each { e ->
+            GString fileName = dataKeyListViewFileName(e)
+            def file = new File(fileName)
+            dataKeyListViewList.put(e.id, file.exists())
+        }
+        // 检查用户视图的存在性
         def dataKeyViewList = [:]
         dataKeyList.each { e ->
-            GString fileName = dataKeyViewFileName(e)
+            GString fileName = dataKeyInputViewFileName(e)
             def file = new File(fileName)
             dataKeyViewList.put(e.id, file.exists())
         }
         //println("查询结果：${dataDictionary}  ${dataKeyList}")
         if (request.xhr) {
-            render(template: 'listDataKey', model: [dataKeyList: dataKeyList, dataKeyViewList: dataKeyViewList])
+            render(template: 'listDataKey',
+                    model: [dataKeyList        : dataKeyList,
+                            dataKeyListViewList: dataKeyListViewList,
+                            dataKeyViewList    : dataKeyViewList])
         } else {
             respond dataKeyList
         }

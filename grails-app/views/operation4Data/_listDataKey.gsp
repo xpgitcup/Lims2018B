@@ -41,10 +41,16 @@
                 <td>
                     <a href="operation4Data/downloadTemplate/${item.id}">导入模板</a>
                     <g:if test="${dataKeyViewList.get(item.id)}">
-                        <a href="operation4Data/downloadViewTemplate/${item.id}">下载输入界面模板</a>
+                        <a href="operation4Data/downloadViewTemplate/${item.id}">输入界面</a>
                     </g:if>
                     <g:else>
-                        <a href="operation4Data/downloadViewTemplate/${item.id}">生成并下载输入界面模板</a>
+                        <a href="operation4Data/downloadViewTemplate/${item.id}">生成输入界面</a>
+                    </g:else>
+                    <g:if test="${dataKeyListViewList.get(item.id)}">
+                        <a href="operation4Data/downloadListViewTemplate/${item.id}">列表模板</a>
+                    </g:if>
+                    <g:else>
+                        <a href="operation4Data/downloadListViewTemplate/${item.id}">生成列表模板</a>
                     </g:else>
                 </td>
                 <td>
