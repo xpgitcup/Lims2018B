@@ -8,9 +8,31 @@
       <table>
         <g:each in="${dataItemList}" status="i" var="item">
           <tr class="${(i % 2) == 0 ? 'even' : 'odd'}">
-            <td>${item.id}</td>
-            <td>${item.dataKey.dataTag}</td>
-            <td>${item?.subDataItems?.size()}</td>
+            <td>
+              <table>
+                <tr>
+                  <td>${item.id}</td>
+                  <td>${item.dataKey.dataTag}</td>
+                  <td>${item?.subDataItems?.size()}</td>
+                  <td><a href="">查看</a></td>
+                </tr>
+                <tr>
+                  <td>${item?.subDataItems[0].id}</td>
+                  <td>${item?.subDataItems[0].dataKey.dataTag}</td>
+                  <td>${item?.subDataItems[0].dataValue}</td>
+                </tr>
+                <tr>
+                  <td>${item?.subDataItems[1].id}</td>
+                  <td>${item?.subDataItems[1].dataKey.dataTag}</td>
+                  <td>${item?.subDataItems[1].dataValue}</td>
+                </tr>
+                <tr>
+                  <td>${item?.subDataItems[2].id}</td>
+                  <td>${item?.subDataItems[2].dataKey.dataTag}</td>
+                  <td>${item?.subDataItems[2].dataValue}</td>
+                </tr>
+              </table>
+            </td>
           </tr>
         </g:each>
       </table>

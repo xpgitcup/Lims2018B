@@ -345,11 +345,11 @@ class Operation4DataController {
                                     td("\${item.dataKey.dataTag}")
                                     td("\${item?.subDataItems?.size()}")
                                 }
-                                "g:each"(in:"\${item?.subDataItems}", status:"j", var:"e") {
-                                    tr{
-                                        td("\${e.id}")
-                                        td("\${e.data}")
-                                        td("\${e.id}")
+                                dataKey.subDataKeys.eachWithIndex { DataKey entry, int i ->
+                                    tr {
+                                        td("\${item?.subDataItems[${i}].id}")
+                                        td("\${item?.subDataItems[${i}].dataKey.dataTag}")
+                                        td("\${item?.subDataItems[${i}].dataValue}")
                                     }
                                 }
                             }
