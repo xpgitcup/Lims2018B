@@ -1,4 +1,4 @@
-package cn.edu.cup.os4Data
+package cn.edu.cup.os4data
 
 import cn.edu.cup.dictionary.DataDictionary
 import cn.edu.cup.dictionary.DataItem

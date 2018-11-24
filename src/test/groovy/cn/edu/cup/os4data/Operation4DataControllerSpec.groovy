@@ -1,4 +1,4 @@
-package cn.edu.cup.os4Data
+package cn.edu.cup.os4data
 
 import grails.testing.web.controllers.ControllerUnitTest
 import spock.lang.Specification
