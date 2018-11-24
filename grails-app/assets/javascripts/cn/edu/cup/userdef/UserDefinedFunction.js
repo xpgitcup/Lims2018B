@@ -11,6 +11,12 @@ $(function () {
 
 })
 
+function createUserClassLibrary() {
+    console.info("创建用户类库");
+    var id = readCookie("currentUserDefinedFunction", 1)
+    ajaxRun("operation4UserDefinedFunction/createUserClassLibrary", id, "list" + "用户类库" + "Div");
+}
+
 function selectUserDefinedFunction(id) {
     $.cookie("currentUserDefinedFunction", id)
     console.info("记录当前功能：" + id);

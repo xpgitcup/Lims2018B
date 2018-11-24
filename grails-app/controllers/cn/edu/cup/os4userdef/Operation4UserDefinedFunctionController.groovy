@@ -6,6 +6,7 @@ import grails.converters.JSON
 import grails.validation.ValidationException
 
 import static org.springframework.http.HttpStatus.CREATED
+import static org.springframework.http.HttpStatus.NOT_FOUND
 
 class Operation4UserDefinedFunctionController {
 
@@ -17,11 +18,38 @@ class Operation4UserDefinedFunctionController {
     * */
 
     /*
+    * 保存====用户类库
+    * */
+
+    def saveUserClassLibrary(UserClassLibrary userClassLibrary) {
+        if (userClassLibrary == null) {
+            notFound()
+            return
+        }
+
+        try {
+            userClassLibraryService.save(userClassLibrary)
+        } catch (ValidationException e) {
+            respond userClassLibrary.errors, view:'createUserClassLibrary'
+            return
+        }
+
+        request.withFormat {
+            form multipartForm {
+                flash.message = message(code: 'default.created.message', args: [message(code: 'userClassLibrary.label', default: 'UserClassLibrary'), userClassLibrary.id])
+                //redirect userClassLibrary
+                redirect(action: "index")
+            }
+            '*' { respond userClassLibrary, [status: CREATED] }
+        }
+    }
+
+    /*
     * 新建====用户类库
     * */
 
-    def createUserClassLibrary() {
-        def userClassLibrary = new UserClassLibrary(params)
+    def createUserClassLibrary(UserDefinedFunction userDefinedFunction) {
+        def userClassLibrary = new UserClassLibrary(userDefinedFunction: userDefinedFunction)
         if (request.xhr) {
             render(template: 'createUserClassLibrary', model: [userClassLibrary: userClassLibrary])
         } else {
@@ -132,4 +160,15 @@ class Operation4UserDefinedFunctionController {
     }
 
     def index() {}
+
+    protected void notFound() {
+        request.withFormat {
+            form multipartForm {
+                flash.message = message(code: 'default.not.found.message', args: [message(code: 'userClassLibrary.label', default: 'UserClassLibrary'), params.id])
+                redirect action: "index", method: "GET"
+            }
+            '*'{ render status: NOT_FOUND }
+        }
+    }
+
 }
