@@ -27,7 +27,7 @@
 <div class="nav">
     <ul>
         <li><a href="#">当前功能：</a></li>
-        <li><a href="#"><div id="currentFunction"></div></a></li>
+        <li><a href="#"><div id="currentUserDefinedFunction"></div></a></li>
         <li><a href="#">当前类库：</a></li>
         <li><a href="#"><div id="currentLibrary"></div></a></li>
         <li><a href="javascript: createUserDefinedFunction()" class="create">新功能</a></li>

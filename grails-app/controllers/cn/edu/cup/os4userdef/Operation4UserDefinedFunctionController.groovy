@@ -1,9 +1,106 @@
 package cn.edu.cup.os4userdef
 
+import cn.edu.cup.userdef.UserClassLibrary
 import cn.edu.cup.userdef.UserDefinedFunction
 import grails.converters.JSON
+import grails.validation.ValidationException
+
+import static org.springframework.http.HttpStatus.CREATED
 
 class Operation4UserDefinedFunctionController {
+
+    def userDefinedFunctionService
+    def userClassLibraryService
+
+    /*
+    * 用户类库==========================================================================================================
+    * */
+
+    /*
+    * 新建====用户类库
+    * */
+
+    def createUserClassLibrary() {
+        def userClassLibrary = new UserClassLibrary(params)
+        if (request.xhr) {
+            render(template: 'createUserClassLibrary', model: [userClassLibrary: userClassLibrary])
+        } else {
+            respond userClassLibrary
+        }
+    }
+
+    /*
+    * 用户类库列表
+    * */
+
+    def listUserClassLibrary() {
+        def userClassLibraryList = UserClassLibrary.list(params)
+        if (request.xhr) {
+            render(template: 'listUserClassLibrary', model: [userClassLibraryList: userClassLibraryList])
+        } else {
+            respond userClassLibraryList
+        }
+    }
+
+    /*
+    * 统计用户类库
+    * */
+
+    def countUserClassLibrary() {
+        def count = 0
+        count = cn.edu.cup.userdef.UserClassLibrary.count()
+        println("统计结果--用户自定义功能：${count}")
+        def result = [count: count]
+        if (request.xhr) {
+            render result as JSON
+        } else {
+            result
+        }
+    }
+
+    /*
+    * 用户自定义功能====================================================================================================
+    * */
+
+    /*
+    * 保存-----用户自定义功能
+    * */
+
+    def saveUserDefinedFunction(UserDefinedFunction userDefinedFunction) {
+        if (userDefinedFunction == null) {
+            notFound()
+            return
+        }
+
+        try {
+            userDefinedFunctionService.save(userDefinedFunction)
+        } catch (ValidationException e) {
+            respond userDefinedFunction.errors, view: 'createUserDefinedFunction'
+            return
+        }
+
+        request.withFormat {
+            form multipartForm {
+                flash.message = message(code: 'default.created.message', args: [message(code: 'userDefinedFunction.label', default: 'UserDefinedFunction'), userDefinedFunction.id])
+                //redirect userDefinedFunction
+                redirect(action: "index")
+            }
+            '*' { respond userDefinedFunction, [status: CREATED] }
+        }
+    }
+
+    /*
+    * 新建-----用户自定义功能
+    * */
+
+    def createUserDefinedFunction() {
+        def userDefinedFunction = new UserDefinedFunction(params)
+        if (request.xhr) {
+            render(template: 'createUserDefinedFunction', model: [userDefinedFunction: userDefinedFunction])
+        } else {
+            respond userDefinedFunction
+        }
+    }
 
     /*
     * 用户自定义功能列表

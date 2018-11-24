@@ -11,6 +11,18 @@ $(function () {
 
 })
 
+function selectUserDefinedFunction(id) {
+    $.cookie("currentUserDefinedFunction", id)
+    console.info("记录当前功能：" + id);
+    operation4UserDefinedFunctionDiv.tabs("select", "用户类库");
+    $("#currentUserDefinedFunction").html(id);
+}
+
+function createUserDefinedFunction() {
+    console.info("创建新的功能");
+    ajaxRun("operation4UserDefinedFunction/createUserDefinedFunction", 0, "list" + "用户自定义功能" + "Div");
+}
+
 function countUserDefinedFunction(title) {
     console.info("统计数据..." + title);
     var total = 0;
@@ -19,6 +31,7 @@ function countUserDefinedFunction(title) {
             total = ajaxCalculate("operation4UserDefinedFunction/countUserDefinedFunction");
             break
         case "用户类库":
+            total = ajaxCalculate("operation4UserDefinedFunction/countUserClassLibrary");
             break
         case  "用户类":
             break
@@ -37,6 +50,7 @@ function loadUserDefinedFunction(title, page, pageSize) {
             ajaxRun("operation4UserDefinedFunction/listUserDefinedFunction" + params, 0, "list" + title + "Div");
             break
         case "用户类库":
+            ajaxRun("operation4UserDefinedFunction/listUserClassLibrary" + params, 0, "list" + title + "Div");
             break
         case  "用户类":
             break
