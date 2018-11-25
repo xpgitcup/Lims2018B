@@ -57,9 +57,36 @@ class Operation4UserDefinedFunctionController {
     /*
     * 导入类库
     * */
+
     def importUserClasses(UserClassLibrary userClassLibrary) {
         maintainUserClassLibraryService.importUserClasses(userClassLibrary)
         redirect(action: "index")
+    }
+
+    /*
+    * 更新用户类库
+    * */
+
+    def updateUserClassLibrary(UserClassLibrary userClassLibrary) {
+        println("开始更新...")
+        if (params.uploadedFile) {
+            println("上传类库文件...${params.uploadedFile.originalFilename}")
+            def fileName = params.uploadedFile.originalFilename
+            userClassLibrary.fileName = fileName
+            userClassLibraryService.save(userClassLibrary)
+            //处理文件上传
+            String destDir = usreClassLibraryFileName(userClassLibrary)
+            params.destDir = destDir
+            println(destDir)
+            def sf = commonService.upload(params)
+            println("更新${sf}成功...")
+        }
+        redirect(action: "index")
+    }
+
+    private String usreClassLibraryFileName(UserClassLibrary userClassLibrary) {
+        def destDir = servletContext.getRealPath("/") + "userClassLibrary" + "/${userClassLibrary.userDefinedFunction.id}/${userClassLibrary.id}"
+        destDir
     }
 
     /*
@@ -78,7 +105,7 @@ class Operation4UserDefinedFunctionController {
             if (params.uploadedFile) {
                 println("上传类库文件...")
                 //处理文件上传
-                def destDir = servletContext.getRealPath("/") + "userClassLibrary" + "/${userClassLibrary.userDefinedFunction.id}/${userClassLibrary.id}"
+                String destDir = usreClassLibraryFileName(userClassLibrary)
                 def uploadedFileDataKeyId = params.uploadedFileDataKeyId
                 def uploadedFilePath = params.uploadedFilePath
                 params.destDir = destDir

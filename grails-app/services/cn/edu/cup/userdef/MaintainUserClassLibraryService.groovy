@@ -11,6 +11,7 @@ import java.util.jar.JarFile
 class MaintainUserClassLibraryService {
 
     def userClassService
+    def dataKeyService
 
     def generateParameters(DataItem dataItem) {
         def m = [:]
@@ -63,7 +64,8 @@ class MaintainUserClassLibraryService {
                     ens.each { e->
                         def cn = e.toString().replace("/", ".")
                         cn = cn.replace(".class", "")
-                        def nc = new UserClass(name: cn, userClassLibrary: userClassLibrary, baseOn: 10)
+                        def dataKey = dataKeyService.get(10)
+                        def nc = new UserClass(name: cn, userClassLibrary: userClassLibrary, baseOn: dataKey)
                         if (UserClass.countByNameAndUserClassLibrary(cn, userClassLibrary)<1) {
                             userClassService.save(nc)
                             println("成功导入${cn}...")

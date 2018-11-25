@@ -17,12 +17,13 @@
     <g:hasErrors bean="${this.userClassLibrary}">
         <ul class="errors" role="alert">
             <g:eachError bean="${this.userClassLibrary}" var="error">
-                <li <g:if test="${error in org.springframework.validation.FieldError}">data-field-id="${error.field}"</g:if>><g:message error="${error}"/></li>
+                <li <g:if test="${error in org.springframework.validation.FieldError}">data-field-id="${error.field}"</g:if>><g:message
+                        error="${error}"/></li>
             </g:eachError>
         </ul>
     </g:hasErrors>
 
-    <!--f:table collection="${userClassLibraryList}"/-->
+<!--f:table collection="${userClassLibraryList}"/-->
     <table>
         <thead>
         <th>id</th>
@@ -31,6 +32,7 @@
         <th>File Name</th>
         <th>Size</th>
         <th>作者</th>
+        <th>更新</th>
         </thead>
         <g:each in="${userClassLibraryList}" status="i" var="item">
             <tr class="${(i % 2) == 0 ? 'even' : 'odd'}">
@@ -40,6 +42,23 @@
                 <td>${item.fileName}</td>
                 <td>${item?.userClass.size()}</td>
                 <td>${item.developer}</td>
+                <td>
+                    <g:uploadForm action="updateUserClassLibrary" method="post">
+                        <div class="nav">
+                            <ul>
+                                <li>
+                                    <input type="hidden" name="id" value="${item.id}"/>
+                                </li>
+                                <li>
+                                    <input type="file" name="uploadedFile" id="afile"/>
+                                </li>
+                                <li>
+                                    <input type="submit" value="update">
+                                </li>
+                            </ul>
+                        </div>
+                    </g:uploadForm>
+                </td>
             </tr>
         </g:each>
     </table>
