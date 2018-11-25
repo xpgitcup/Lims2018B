@@ -40,6 +40,7 @@ function countUserDefinedFunction(title) {
             total = ajaxCalculate("operation4UserDefinedFunction/countUserClassLibrary");
             break
         case  "用户类":
+            total = ajaxCalculate("operation4UserDefinedFunction/countUserClass");
             break
         case  "类方法":
             break
@@ -59,6 +60,7 @@ function loadUserDefinedFunction(title, page, pageSize) {
             ajaxRun("operation4UserDefinedFunction/listUserClassLibrary" + params, 0, "list" + title + "Div");
             break
         case  "用户类":
+            ajaxRun("operation4UserDefinedFunction/listUserClass" + params, 0, "list" + title + "Div");
             break
         case  "类方法":
             break

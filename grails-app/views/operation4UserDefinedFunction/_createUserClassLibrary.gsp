@@ -59,7 +59,7 @@
                 </tr>
                 <tr>
                     <td><label>Usr Defined Function</label></td>
-                    <td><input type="text" name="userDefinedFunction" value="${this.userClassLibrary.userDefinedFunction}"/></td>
+                    <td><input type="text" name="userDefinedFunction" value="${this.userClassLibrary.userDefinedFunction.id}"/></td>
                 </tr>
             </table>
         </fieldset>

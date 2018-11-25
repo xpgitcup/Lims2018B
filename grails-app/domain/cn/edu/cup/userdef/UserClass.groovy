@@ -13,8 +13,8 @@ class UserClass {
 
     static constraints = {
         name()
-        description()
-        baseOn()
+        description(nullable: true)
+        baseOn(nullable: true)
     }
 
     String toString() {
