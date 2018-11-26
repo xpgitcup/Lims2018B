@@ -1,5 +1,6 @@
 var operation4UserDefinedFunctionDiv;
 var tabList4UserDef = ["用户自定义功能", "用户类库", "用户类", "类方法"];
+var idList = ["currentUserDefinedFunction", "currentLibrary", "currentClass", "currentMethod"];
 //var displayDataKeyTreeDiv;
 //var paginationDataKeyDiv;
 
@@ -7,8 +8,8 @@ $(function () {
     operation4UserDefinedFunctionDiv = $("#operation4UserDefinedFunctionDiv");
 
     console.info("用户自定义功能维护...");
-    tabPagesManagerWithPagination("operation4UserDefinedFunctionDiv", tabList4UserDef, loadUserDefinedFunction, countUserDefinedFunction);
-
+    //tabPagesManagerWithPagination("operation4UserDefinedFunctionDiv", tabList4UserDef, loadUserDefinedFunction, countUserDefinedFunction);
+    tabPagesManagerA("operation4UserDefinedFunctionDiv", tabList4UserDef, idList, loadUserDefinedFunction, countUserDefinedFunction);
 })
 
 //======================================================================================================================
@@ -19,9 +20,11 @@ function selectAndTurnToNext(id) {
     switch (currentTab) {
         case "用户自定义功能":
             operation4UserDefinedFunctionDiv.tabs("select", "用户类库")
+            $("#currentUserDefinedFunction").html(id);
             break;
         case "用户类库":
             operation4UserDefinedFunctionDiv.tabs("select", "用户类")
+            $("#currentLibrary").html(id);
             break;
         case "用户类":
             operation4UserDefinedFunctionDiv.tabs("select", "类方法")
@@ -35,15 +38,8 @@ function selectAndTurnToNext(id) {
 //======================================================================================================================
 function createUserClassLibrary() {
     console.info("创建用户类库");
-    var id = readCookie("currentUserDefinedFunction", 1)
+    var id = readCookie("currentKey" + "用户自定义功能", 1)
     ajaxRun("operation4UserDefinedFunction/createUserClassLibrary", id, "list" + "用户类库" + "Div");
-}
-
-function selectUserDefinedFunction(id) {
-    $.cookie("currentUserDefinedFunction", id)
-    console.info("记录当前功能：" + id);
-    operation4UserDefinedFunctionDiv.tabs("select", "用户类库");
-    $("#currentUserDefinedFunction").html(id);
 }
 
 function createUserDefinedFunction() {

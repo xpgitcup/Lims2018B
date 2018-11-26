@@ -32,13 +32,15 @@ class MaintainUserClassLibraryService {
         println "classInstance ${clazz}"
         def o = clazz.newInstance()
         //o.invokeMethod("main", null)
-        def data = DataItem.get(4)
+        def dataList = DataItem.findAllByDataKey(userClass.baseOn)
+        def data = dataList[0]
         def m = generateParameters(data)
         println("${m}")
         o.invokeMethod("fetch", m)
         o.invokeMethod("run", null)
         def r = o.invokeMethod("feed", null)
         println("计算结果：${r}")
+        return r
     }
 
     def importUserClasses(UserClassLibrary userClassLibrary) {
@@ -64,8 +66,7 @@ class MaintainUserClassLibraryService {
                     ens.each { e->
                         def cn = e.toString().replace("/", ".")
                         cn = cn.replace(".class", "")
-                        def dataKey = dataKeyService.get(10)
-                        def nc = new UserClass(name: cn, userClassLibrary: userClassLibrary, baseOn: dataKey)
+                        def nc = new UserClass(name: cn, userClassLibrary: userClassLibrary)
                         if (UserClass.countByNameAndUserClassLibrary(cn, userClassLibrary)<1) {
                             userClassService.save(nc)
                             println("成功导入${cn}...")

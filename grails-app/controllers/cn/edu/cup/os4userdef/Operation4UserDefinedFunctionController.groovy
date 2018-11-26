@@ -13,6 +13,7 @@ class Operation4UserDefinedFunctionController {
 
     def userDefinedFunctionService
     def userClassLibraryService
+    def userClassService
     def commonService
     def maintainUserClassLibraryService
 
@@ -20,9 +21,36 @@ class Operation4UserDefinedFunctionController {
     * 用户类==========================================================================================================
     * */
 
+    def saveUserClass(UserClass userClass) {
+        if (userClass == null) {
+            notFound()
+            return
+        }
+
+        try {
+            userClassService.save(userClass)
+        } catch (ValidationException e) {
+            println(userClass.errors)
+            respond userClass.errors, view: 'create'
+            return
+        }
+
+        request.withFormat {
+            form multipartForm {
+                flash.message = message(code: 'default.created.message', args: [message(code: 'userClass.label', default: 'UserClass'), userClass.id])
+                //redirect userClass
+                redirect(action: "index")
+            }
+            '*' { respond userClass, [status: CREATED] }
+        }
+    }
+
     def testClass(UserClass userClass) {
-        maintainUserClassLibraryService.testClass(userClass)
-        redirect(action: "index")
+        def result = maintainUserClassLibraryService.testClass(userClass)
+        flash.message = "${result}"
+        //redirect(action: "index")
+        println("${flash}")
+        model: flash
     }
 
     /*
@@ -102,7 +130,7 @@ class Operation4UserDefinedFunctionController {
         try {
             userClassLibraryService.save(userClassLibrary)
             //类库文件的上传
-            if (params.uploadedFile) {
+            if (params.uploadedFile != null) {
                 println("上传类库文件...")
                 //处理文件上传
                 String destDir = usreClassLibraryFileName(userClassLibrary)

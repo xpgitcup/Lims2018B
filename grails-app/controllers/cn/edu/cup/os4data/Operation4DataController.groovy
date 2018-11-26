@@ -168,10 +168,12 @@ class Operation4DataController {
         println("查询结果：${dataKey} -- ${count}:  ${dataItemList}")
         //--------------------------------------------------------------------------------------------------------------
         def view = "listDataItem"
-        def listViewName = dataKeyListViewFileName(dataKey)
-        def dataKeyListViewFile = new File(listViewName)
-        if (dataKeyListViewFile.exists()) {
-            view = dataKeyListViewTemplateName(dataKey)
+        if (dataKey) {
+            def listViewName = dataKeyListViewFileName(dataKey)
+            def dataKeyListViewFile = new File(listViewName)
+            if (dataKeyListViewFile.exists()) {
+                view = dataKeyListViewTemplateName(dataKey)
+            }
         }
         //--------------------------------------------------------------------------------------------------------------
         // 如果用户指定，使用用户指定的

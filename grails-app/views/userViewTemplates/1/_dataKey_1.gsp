@@ -11,7 +11,7 @@
             <f:with bean="dataItem">
               <tr>
                 <td>
-                  <label>用户类库/(9).用户类库/(模型)</label>
+                  <label>测试性数据字典000/(3).demo数学模型/(模型)</label>
                 </td>
                 <td>
                   <input type="hidden" name="dataKey.id" value="1" />
@@ -22,7 +22,7 @@
           <table>
             <tr>
               <td>
-                <label>类库名称</label>
+                <label>第1个参数</label>
                 <input type="hidden" name="subDataItems[0].dataKey.id" value="2" />
                 <input type="hidden" name="subDataItems[0].upDataItem.id" value="null" />
               </td>
@@ -33,7 +33,7 @@
             </tr>
             <tr>
               <td>
-                <label>类库说明</label>
+                <label>第2个参数</label>
                 <input type="hidden" name="subDataItems[1].dataKey.id" value="3" />
                 <input type="hidden" name="subDataItems[1].upDataItem.id" value="null" />
               </td>
@@ -41,22 +41,6 @@
                 <input name="subDataItems[1].dataValue" id="dataValue_1" />
               </td>
               <td />
-            </tr>
-            <tr>
-              <td>
-                <label>库文件</label>
-                <input type="hidden" name="subDataItems[2].dataKey.id" value="7" />
-                <input type="hidden" name="subDataItems[2].upDataItem.id" value="null" />
-              </td>
-              <td>
-                <input type="text" name="subDataItems[2].dataValue" id="file_2" />
-              </td>
-              <td>
-                <input type="hidden" name="uploadedFilePath" value="null" />
-                <input type="hidden" name="uploadedFileDataKeyId" value="7" />
-                <input type="hidden" name="uploadedFileIndex" value="2" />
-                <input type="file" name="uploadedFile" id="input_2" onchange="updateUploadFileName(2)" />
-              </td>
             </tr>
           </table>
         </fieldset>

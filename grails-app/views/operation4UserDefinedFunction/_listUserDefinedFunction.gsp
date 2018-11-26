@@ -27,7 +27,7 @@
         <g:each in="${userDefinedFunctionList}" status="i" var="item">
             <tr class="${(i % 2) == 0 ? 'even' : 'odd'}">
                 <td><a href="javascript: selectAndTurnToNext(${item.id})">${item.id}</a></td>
-                <td><a href="javascript: selectUserDefinedFunction(${item.id})">${item.name}</a></td>
+                <td><a href="javascript: selectAndTurnToNext(${item.id})">${item.name}</a></td>
                 <td>${item.description}</td>
                 <td>${item.userClassLibrary?.size()}</td>
             </tr>

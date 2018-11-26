@@ -2,15 +2,15 @@
 Navicat MySQL Data Transfer
 
 Source Server         : sample
-Source Server Version : 50716
+Source Server Version : 50722
 Source Host           : localhost:3306
 Source Database       : lims2018adb
 
 Target Server Type    : MYSQL
-Target Server Version : 50716
+Target Server Version : 50722
 File Encoding         : 65001
 
-Date: 2018-11-22 22:32:09
+Date: 2018-11-26 18:08:33
 */
 
 SET FOREIGN_KEY_CHECKS=0;
@@ -35,17 +35,11 @@ CREATE TABLE `data_key` (
   KEY `FKl2uqn74kg27n0as7b242b89oq` (`dictionary_id`),
   CONSTRAINT `FKgnosaw19330m9b74wxm8aknnf` FOREIGN KEY (`up_data_key_id`) REFERENCES `data_key` (`id`),
   CONSTRAINT `FKl2uqn74kg27n0as7b242b89oq` FOREIGN KEY (`dictionary_id`) REFERENCES `data_dictionary` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=10 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8;
 
 -- ----------------------------
 -- Records of data_key
 -- ----------------------------
-INSERT INTO `data_key` VALUES ('1', '0', null, 'dataKeyNormal', '1', '无量纲', ',', null, '用户类库', '1', '0');
-INSERT INTO `data_key` VALUES ('2', '0', '1', 'dataKeyNormal', '1', '无量纲', ',', null, '类库名称', '1', '0');
-INSERT INTO `data_key` VALUES ('3', '0', '1', 'dataKeyNormal', '1', '无量纲', ',', null, '类库说明', '1', '0');
-INSERT INTO `data_key` VALUES ('4', '0', null, 'dataKeyNormal', '1', '无量纲', ',', null, '用户类', '1', '0');
-INSERT INTO `data_key` VALUES ('5', '0', '4', 'dataKeyNormal', '1', '无量纲', ',', null, '类名称', '1', '0');
-INSERT INTO `data_key` VALUES ('6', '0', '4', 'dataKeyNormal', '1', '无量纲', ',', null, '功能说明', '1', '0');
-INSERT INTO `data_key` VALUES ('7', '0', '1', 'dataKeyFile', '1', '无量纲', ',', null, '库文件', '1', '0');
-INSERT INTO `data_key` VALUES ('8', '0', '4', 'dataKeyNormal', '1', '无量纲', ',', null, '输入关键字', '1', '0');
-INSERT INTO `data_key` VALUES ('9', '0', '4', 'dataKeyNormal', '1', '无量纲', ',', null, '输出关键字', '1', '0');
+INSERT INTO `data_key` VALUES ('1', '0', null, 'dataKeyNormal', '1', '无量纲', ',', null, 'demo数学模型', '1', '0');
+INSERT INTO `data_key` VALUES ('2', '0', '1', 'dataKeyNormal', '1', '无量纲', ',', null, '第1个参数', '1', '0');
+INSERT INTO `data_key` VALUES ('3', '0', '1', 'dataKeyNormal', '1', '无量纲', ',', null, '第2个参数', '1', '0');

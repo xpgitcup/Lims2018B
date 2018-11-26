@@ -4,7 +4,7 @@
   </head>
   <body>
     <div id="list-dataItem" class="content scaffold-list" role="main">
-      <h1>用户类库列表：</h1>
+      <h1>demo数学模型列表：</h1>
       <table>
         <g:each in="${dataItemList}" status="i" var="item">
           <tr class="${(i % 2) == 0 ? 'even' : 'odd'}">
@@ -14,7 +14,6 @@
                   <td>${item.id}</td>
                   <td>${item.dataKey.dataTag}</td>
                   <td>${item?.subDataItems?.size()}</td>
-                  <td><a href="">查看</a></td>
                 </tr>
                 <tr>
                   <td>${item?.subDataItems[0].id}</td>
@@ -25,11 +24,6 @@
                   <td>${item?.subDataItems[1].id}</td>
                   <td>${item?.subDataItems[1].dataKey.dataTag}</td>
                   <td>${item?.subDataItems[1].dataValue}</td>
-                </tr>
-                <tr>
-                  <td>${item?.subDataItems[2].id}</td>
-                  <td>${item?.subDataItems[2].dataKey.dataTag}</td>
-                  <td>${item?.subDataItems[2].dataValue}</td>
                 </tr>
               </table>
             </td>

@@ -31,7 +31,29 @@
                 <td>${item.id}</td>
                 <td><a href="operation4UserDefinedFunction/testClass/${item.id}">${item.name}</a></td>
                 <td>${item.description}</td>
-                <td>${item.baseOn}</td>
+                <td>
+                    <g:if test="${!item.baseOn}">
+                        <g:form action="saveUserClass" method="post">
+                            <div class="nav">
+                                <ul>
+                                    <li>
+                                        <input type="hidden" name="id" value="${item.id}"/>
+                                        <input type="hidden" name="name" value="${item.name}"/>
+                                    </li>
+                                    <li>
+                                        <g:select from="${cn.edu.cup.dictionary.DataKey.list()}" name="baseOn" optionKey="id" optionValue="dataTag"/>
+                                    </li>
+                                    <li>
+                                        <input type="submit" value="update">
+                                    </li>
+                                </ul>
+                            </div>
+                        </g:form>
+                    </g:if>
+                    <g:else>
+                        ${item.baseOn}
+                    </g:else>
+                </td>
                 <td>${item?.userClassMethod.size()}</td>
                 <td>${item.userClassLibrary}</td>
             </tr>

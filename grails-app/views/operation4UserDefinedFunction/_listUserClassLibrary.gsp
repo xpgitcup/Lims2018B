@@ -36,10 +36,18 @@
         </thead>
         <g:each in="${userClassLibraryList}" status="i" var="item">
             <tr class="${(i % 2) == 0 ? 'even' : 'odd'}">
-                <td>${item.id}</td>
-                <td><a href="operation4UserDefinedFunction/importUserClasses/${item.id}">${item.name}</a></td>
+                <td><a href="javascript: selectAndTurnToNext(${item.id})">${item.id}</a></td>
+                <td><a href="javascript: selectAndTurnToNext(${item.id})">${item.name}</a></td>
                 <td>${item.description}</td>
-                <td>${item.fileName}</td>
+                <td>
+                    ${item.fileName}
+                    <g:if test="${item.fileName}">
+                        <a href="operation4UserDefinedFunction/importUserClasses/${item.id}">导入</a>
+                    </g:if>
+                    <g:else>
+                        请更新
+                    </g:else>
+                </td>
                 <td>${item?.userClass.size()}</td>
                 <td>${item.developer}</td>
                 <td>
