@@ -148,7 +148,14 @@ class Operation4UserDefinedFunctionController {
     * */
 
     def listUserClassLibrary() {
+        println("${params}")
         def userClassLibraryList = UserClassLibrary.list(params)
+        if (params.userDefinedFunction) {
+            def u = UserDefinedFunction.get(params.userDefinedFunction)
+            if (u) {
+                userClassLibraryList = UserClassLibrary.findAllByUserDefinedFunction(u, params)
+            }
+        }
         if (request.xhr) {
             render(template: 'listUserClassLibrary', model: [userClassLibraryList: userClassLibraryList])
         } else {
@@ -163,6 +170,12 @@ class Operation4UserDefinedFunctionController {
     def countUserClassLibrary() {
         def count = 0
         count = cn.edu.cup.userdef.UserClassLibrary.count()
+        if (params.userDefinedFunction) {
+            def u = UserDefinedFunction.get(params.userDefinedFunction)
+            if (u) {
+                count = UserClassLibrary.countByUserDefinedFunction(u)
+            }
+        }
         println("统计结果--用户自定义功能：${count}")
         def result = [count: count]
         if (request.xhr) {
