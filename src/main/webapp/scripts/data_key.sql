@@ -10,7 +10,7 @@ Target Server Type    : MYSQL
 Target Server Version : 50722
 File Encoding         : 65001
 
-Date: 2018-11-26 18:08:33
+Date: 2018-11-27 17:01:04
 */
 
 SET FOREIGN_KEY_CHECKS=0;
@@ -35,11 +35,22 @@ CREATE TABLE `data_key` (
   KEY `FKl2uqn74kg27n0as7b242b89oq` (`dictionary_id`),
   CONSTRAINT `FKgnosaw19330m9b74wxm8aknnf` FOREIGN KEY (`up_data_key_id`) REFERENCES `data_key` (`id`),
   CONSTRAINT `FKl2uqn74kg27n0as7b242b89oq` FOREIGN KEY (`dictionary_id`) REFERENCES `data_dictionary` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=15 DEFAULT CHARSET=utf8;
 
 -- ----------------------------
 -- Records of data_key
 -- ----------------------------
-INSERT INTO `data_key` VALUES ('1', '0', null, 'dataKeyNormal', '1', '无量纲', ',', null, 'demo数学模型', '1', '0');
-INSERT INTO `data_key` VALUES ('2', '0', '1', 'dataKeyNormal', '1', '无量纲', ',', null, '第1个参数', '1', '0');
-INSERT INTO `data_key` VALUES ('3', '0', '1', 'dataKeyNormal', '1', '无量纲', ',', null, '第2个参数', '1', '0');
+INSERT INTO `data_key` VALUES ('1', '0', null, 'dataKeyNormal', '1', '无量纲', ',', null, '教师信息', '1', '0');
+INSERT INTO `data_key` VALUES ('2', '0', null, 'dataKeyNormal', '1', '无量纲', ',', null, '设备信息', '1', '0');
+INSERT INTO `data_key` VALUES ('3', '0', null, 'dataKeyNormal', '1', '无量纲', ',', null, '学生信息', '1', '0');
+INSERT INTO `data_key` VALUES ('4', '0', null, 'dataKeyNormal', '1', '无量纲', ',', null, '项目信息', '1', '0');
+INSERT INTO `data_key` VALUES ('5', '0', null, 'dataKeyNormal', '1', '无量纲', ',', null, '实验信息', '1', '0');
+INSERT INTO `data_key` VALUES ('6', '0', '1', 'dataKeyNormal', '1', '无量纲', ',', null, '姓名', '1', '0');
+INSERT INTO `data_key` VALUES ('7', '0', '1', 'dataKeyNormal', '1', '无量纲', ',', null, '工号', '1', '0');
+INSERT INTO `data_key` VALUES ('8', '0', '1', 'dataKeyNormal', '1', '无量纲', ',', null, '职称', '1', '0');
+INSERT INTO `data_key` VALUES ('9', '0', '3', 'dataKeyNormal', '1', '无量纲', ',', null, '姓名', '1', '0');
+INSERT INTO `data_key` VALUES ('10', '0', '3', 'dataKeyNormal', '1', '无量纲', ',', null, '学号', '1', '0');
+INSERT INTO `data_key` VALUES ('11', '0', '4', 'dataKeyNormal', '1', '无量纲', ',', null, '项目名称', '1', '0');
+INSERT INTO `data_key` VALUES ('12', '0', '4', 'dataKeyNormal', '1', '无量纲', ',', null, '项目类别', '1', '0');
+INSERT INTO `data_key` VALUES ('13', '0', null, 'dataKeyNormal', '1', '无量纲', ',', null, '学生类别', '1', '0');
+INSERT INTO `data_key` VALUES ('14', '0', '13', 'dataKeyNormal', '1', '无量纲', ',', null, '名称', '1', '0');

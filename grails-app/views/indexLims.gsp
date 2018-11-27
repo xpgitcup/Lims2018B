@@ -18,9 +18,9 @@
     <asset:link rel="icon" href="cn/edu/cup/${cn.edu.cup.system.SystemTitle.last()?.applicationLogo}"
                 type="image/x-ico"/>
     <!-- 设置标题，如果没有特殊情况，标题叫这样了。 -->
-    <g:set var="entityName" value="EasyPipe"/>
+    <g:set var="entityName" value="Lims2018"/>
     <title>${entityName}维护</title>
-    <asset:javascript src="cn/edu/cup/os/${entityName}.js"/>
+    <!--asset:javascript src="cn/edu/cup/os/${entityName}.js"/-->
 </head>
 
 <body>

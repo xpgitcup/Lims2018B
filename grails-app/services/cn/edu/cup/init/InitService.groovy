@@ -163,16 +163,6 @@ class InitService {
             newUser("李晓平", "3764", '底层管理 系统维护 公共服务')
             newUser("宫敬", "2156", '底层管理 系统维护 公共服务')
             newUser("吴海浩", "3181", '底层管理 系统维护 公共服务')
-
-            newUser("洪炳沅", "527527", '底层管理 系统维护 公共服务')
-            newUser("闵元", "519519", '底层管理 系统维护 公共服务')
-            newUser("苏越", "519519", '底层管理 系统维护 公共服务')
-            newUser("李愚", "519519", '底层管理 系统维护 公共服务')
-            newUser("周艳红", "519519", '底层管理 系统维护 公共服务')
-            newUser("万洋洋", "519519", '底层管理 系统维护 公共服务')
-            newUser("韦宝成", "519519", '底层管理 系统维护 公共服务')
-            newUser("王茀玺", "519519", '底层管理 系统维护 公共服务')
-            newUser("金浩", "519519", '底层管理 系统维护 公共服务')
         }
     }
 
@@ -209,7 +199,7 @@ class InitService {
         println("初始化系统标题......")
         if (SystemTitle.count() < 1) {
             def systemTitle = new SystemTitle(
-                    applicationTitle: "EasyPipeNetwork 管网模拟种子程序",
+                    applicationTitle: "Lims 2018 实验室信息管理系统",
                     applicationLogo: "cuplogoA.png",
                     applicationLayout: "mainEasyUI"
             )
@@ -217,8 +207,8 @@ class InitService {
             //----------------------------------------------------------------------------------------------------------
             if (SystemSponser.countBySystemTitle(systemTitle) < 1) {
                 newSponser(systemTitle, "中国石油大学", "cuplogoA.png")
-                newSponser(systemTitle, "中海油", "logo_cnooc.png")
-                newSponser(systemTitle, "中联煤", "logo_cbm.png")
+                //newSponser(systemTitle, "中海油", "logo_cnooc.png")
+                //newSponser(systemTitle, "中联煤", "logo_cbm.png")
             }
             //----------------------------------------------------------------------------------------------------------
             if (SystemCarousel.countBySystemTitle(systemTitle) < 1) {

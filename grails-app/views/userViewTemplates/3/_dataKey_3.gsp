@@ -11,10 +11,10 @@
             <f:with bean="dataItem">
               <tr>
                 <td>
-                  <label>实验室信息管理/(14).教师信息/(模型)</label>
+                  <label>实验室信息管理/(14).学生信息/(模型)</label>
                 </td>
                 <td>
-                  <input type="hidden" name="dataKey.id" value="1" />
+                  <input type="hidden" name="dataKey.id" value="3" />
                 </td>
               </tr>
             </f:with>
@@ -23,7 +23,7 @@
             <tr>
               <td>
                 <label>姓名</label>
-                <input type="hidden" name="subDataItems[0].dataKey.id" value="6" />
+                <input type="hidden" name="subDataItems[0].dataKey.id" value="9" />
                 <input type="hidden" name="subDataItems[0].upDataItem.id" value="null" />
               </td>
               <td>
@@ -33,23 +33,12 @@
             </tr>
             <tr>
               <td>
-                <label>工号</label>
-                <input type="hidden" name="subDataItems[1].dataKey.id" value="7" />
+                <label>学号</label>
+                <input type="hidden" name="subDataItems[1].dataKey.id" value="10" />
                 <input type="hidden" name="subDataItems[1].upDataItem.id" value="null" />
               </td>
               <td>
                 <input name="subDataItems[1].dataValue" id="dataValue_1" />
-              </td>
-              <td />
-            </tr>
-            <tr>
-              <td>
-                <label>职称</label>
-                <input type="hidden" name="subDataItems[2].dataKey.id" value="8" />
-                <input type="hidden" name="subDataItems[2].upDataItem.id" value="null" />
-              </td>
-              <td>
-                <input name="subDataItems[2].dataValue" id="dataValue_2" />
               </td>
               <td />
             </tr>
