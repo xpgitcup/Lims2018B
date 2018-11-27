@@ -9,7 +9,7 @@ class OperationSystemInterceptor {
         def m = matchAll().excludes(controller: "home")
         m.excludes(controller: "systemLog")
         //m.excludes(controller: "operation4SystemLog")
-        m.excludes(uri: "/Lims2018A/")  //这一句是关键。发布后显示主页的关键
+        m.excludes(uri: "/Lims2018B/")  //这一句是关键。发布后显示主页的关键
         m.excludes(uri: "/")                    //开发期间显示主页
     }
 
